@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Celebration } from "@/lib/celebrations";
 import { useDemo } from "@/lib/demo/store";
 import { Panel } from "@/components/celebrate/Theme";
+import { ReportButton } from "@/components/app/ReportButton";
 
 const inr = (n: number) => "₹" + n.toLocaleString("en-IN");
 const chip = "inline-flex min-h-11 items-center justify-center rounded-full px-4 text-small font-semibold transition active:scale-[0.98]";
@@ -27,7 +28,7 @@ export function Contributions({ eventId, c }: { eventId: string; c: Celebration 
   const [amount, setAmount] = useState("");
   const [wishId, setWishId] = useState("");
   const [message, setMessage] = useState("");
-  const [anonymous, setAnonymous] = useState(false);
+  const [anonymous, setAnonymous] = useState(d.anonymousByDefault);
   const [msg, setMsg] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
 
   function submit(e: React.FormEvent) {
@@ -36,7 +37,7 @@ export function Contributions({ eventId, c }: { eventId: string; c: Celebration 
     const r = d.recordContribution(eventId, { amount: n, wishId, message, anonymous });
     if (!r.ok) return setMsg({ kind: "error", text: r.error });
     setMsg({ kind: "ok", text: "Recorded. It shows as Self-reported until the organiser confirms it." });
-    setAmount(""); setWishId(""); setMessage(""); setAnonymous(false); setOpen(false);
+    setAmount(""); setWishId(""); setMessage(""); setAnonymous(d.anonymousByDefault); setOpen(false);
   }
 
   return (
@@ -90,7 +91,7 @@ export function Contributions({ eventId, c }: { eventId: string; c: Celebration 
           </div>
         </form>
       ) : (
-        <button type="button" onClick={() => { setOpen(true); setMsg(null); }} className={`${chip} mt-4 w-full bg-white font-bold text-navy`}>
+        <button type="button" onClick={() => { setOpen(true); setMsg(null); setAnonymous(d.anonymousByDefault); }} className={`${chip} mt-4 w-full bg-white font-bold text-navy`}>
           Record a contribution
         </button>
       )}
@@ -127,6 +128,9 @@ export function Contributions({ eventId, c }: { eventId: string; c: Celebration 
                 )}
               </div>
             ) : null}
+            {!x.isMine && (
+              <ReportButton communityId={d.event(eventId)!.communityId} target={{ type: "contribution", contributionId: x.id }} summary={`A contribution record on ${d.event(eventId)!.title} (${inr(x.amount)})`} label="Report" className="-ml-3" />
+            )}
           </li>
         ))}
       </ul>

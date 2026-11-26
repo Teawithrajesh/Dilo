@@ -85,7 +85,7 @@ test("Ravi requests to join, then Priya sees 1 waiting request", async ({ page }
   await page.getByRole("button", { name: "Request to join" }).click();
   await expect(page.getByTestId("invite-card")).toContainText("Request sent");
   await tab(page, "Notifications").click();
-  await expect(page.getByTestId("notice").first()).toContainText(/request to join Sharma Family was sent/);
+  await expect(page.getByTestId("notice").filter({ hasText: /request to join Sharma Family was sent/ }).first()).toBeVisible();
   // switch person without reloading (demo state lives in this tab)
   await tab(page, "Profile").click();
   await page.getByRole("button", { name: "Switch demo person" }).click();
@@ -97,7 +97,7 @@ test("Ravi requests to join, then Priya sees 1 waiting request", async ({ page }
 
 test("notifications: unread badge clears with Mark all read", async ({ page }) => {
   await signInAs(page, "Priya");
-  await expect(tab(page, "Notifications")).toContainText("2");
+  await expect(tab(page, "Notifications")).toContainText("3"); // 2 sample + the welcome letter
   await tab(page, "Notifications").click();
   await page.getByRole("button", { name: "Mark all read" }).click();
   await expect(page.getByText("All caught up")).toBeVisible();

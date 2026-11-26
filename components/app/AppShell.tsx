@@ -37,8 +37,9 @@ export function AppShell({ title, children }: { title: string; children: React.R
             <img src="/brand/dilo-logo.png" alt="" width={666} height={705} className="h-9 w-auto" />
             <h1 className="font-display text-heading font-bold">{title}</h1>
           </div>
-          <Link href="/profile/" aria-label={`Signed in as ${me.name}. Open profile`} className="inline-flex min-h-11 min-w-11 items-center justify-center">
+          <Link href="/profile/" className="inline-flex min-h-11 min-w-11 items-center justify-center">
             <Avatar person={me} size="h-9 w-9 text-tiny" />
+            <span className="sr-only">Profile, signed in as {me.name}</span>
           </Link>
         </div>
       </header>

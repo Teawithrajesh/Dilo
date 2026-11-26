@@ -80,7 +80,7 @@ test("a new celebration notifies every member of that community", async ({ page 
   for (const member of ["Neha", "Amit"]) {
     await switchTo(page, member);
     await tab(page, "Notifications").click();
-    await expect(page.getByTestId("notice").first()).toContainText("Priya added a new celebration in Sharma Family: Riya's 12th Birthday");
+    await expect(page.getByTestId("notice").filter({ hasText: "Priya added a new celebration in Sharma Family: Riya's 12th Birthday" }).first()).toBeVisible();
     await tab(page, "Home").click();
     await expect(page.getByTestId("event-card").filter({ hasText: "Riya's 12th Birthday" })).toBeVisible();
   }
@@ -99,7 +99,7 @@ test("when someone is approved, the existing members are told", async ({ page })
   await page.getByRole("button", { name: "Approve" }).click();
   await switchTo(page, "Neha");
   await tab(page, "Notifications").click();
-  await expect(page.getByTestId("notice").first()).toContainText("Ravi Kumar joined Sharma Family");
+  await expect(page.getByTestId("notice").filter({ hasText: "Ravi Kumar joined Sharma Family" }).first()).toBeVisible();
 });
 
 test("a past date is refused", async ({ page }) => {

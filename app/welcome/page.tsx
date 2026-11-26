@@ -4,6 +4,7 @@ import { GhostButton, PrimaryButton } from "@/components/landing/Buttons";
 import { Icon, type IconName } from "@/components/Icon";
 import { CelebrationIcon } from "@/components/celebrate/CelebrationIcon";
 import { celebrations } from "@/lib/celebrations";
+import { AccountDeleted } from "@/components/app/AccountDeleted";
 
 export const metadata = { title: "DILO · Together, We Make Dreams Come True" };
 
@@ -66,7 +67,7 @@ function SectionHeading({ eyebrow, title, text }: { eyebrow: string; title: stri
 
 function Progress({ value, accent }: { value: number; accent: string }) {
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-white/10" role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
+    <div className="h-2 w-full overflow-hidden rounded-full bg-white/10" role="progressbar" aria-label="Recorded towards goal" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
       <div className={`h-full rounded-full bg-gradient-to-r ${accent}`} style={{ width: `${value}%` }} />
     </div>
   );
@@ -124,6 +125,7 @@ export default function Welcome() {
         </div>
       </header>
 
+      <AccountDeleted />
       <main>
         {/* 2. Hero */}
         <section className="relative overflow-hidden">
@@ -157,7 +159,7 @@ export default function Welcome() {
                   <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-pink to-orange text-white">
                     <Icon name={s.icon} />
                   </span>
-                  <span className="font-display text-title font-extrabold text-white/15">0{i + 1}</span>
+                  <span aria-hidden className="font-display text-title font-extrabold text-white/40">0{i + 1}</span>
                 </div>
                 <h3 className="mt-5 text-heading font-bold">{s.title}</h3>
                 <p className="mt-2 text-small text-white/70">{s.text}</p>
