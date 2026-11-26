@@ -4,6 +4,7 @@ import { GhostButton, PrimaryButton } from "@/components/landing/Buttons";
 import { Icon, type IconName } from "@/components/Icon";
 import { CelebrationIcon } from "@/components/celebrate/CelebrationIcon";
 import { celebrations } from "@/lib/celebrations";
+import { AccountDeleted } from "@/components/app/AccountDeleted";
 
 export const metadata = { title: "DILO · Together, We Make Dreams Come True" };
 
@@ -124,6 +125,7 @@ export default function Welcome() {
         </div>
       </header>
 
+      <AccountDeleted />
       <main>
         {/* 2. Hero */}
         <section className="relative overflow-hidden">

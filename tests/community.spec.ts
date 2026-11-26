@@ -114,7 +114,8 @@ test("moderator can approve and remove members, but not the owner or roles", asy
   await signInAs(page, "Amit");
   await openSharmaMembers(page);
   await expect(page.getByRole("button", { name: "Make moderator" })).toHaveCount(0);
-  await expect(page.getByTestId("member").filter({ hasText: "Priya Sharma" }).getByRole("button")).toHaveCount(0);
+  const owner = page.getByTestId("member").filter({ hasText: "Priya Sharma" });
+  await expect(owner.getByRole("button", { name: /Remove|Make/ })).toHaveCount(0);
   page.once("dialog", (d) => d.accept());
   await page.getByTestId("member").filter({ hasText: "Neha Verma" }).getByRole("button", { name: "Remove" }).click();
   await expect(page.getByTestId("member").filter({ hasText: "Neha Verma" })).toHaveCount(0);

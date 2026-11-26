@@ -29,8 +29,7 @@ export default function PrivacySettings() {
     if (!window.confirm("Delete your DILO account? You'll leave all your communities. This can't be undone.")) return;
     const r = d.deleteAccount();
     if (!r.ok) return setMsg({ kind: "error", text: r.error });
-    d.signOut();
-    router.push("/welcome/");
+    router.push("/welcome/?deleted=1"); // sign-out happens on arrival there
   }
 
   return (
