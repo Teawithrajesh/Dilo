@@ -72,3 +72,5 @@ Founder feedback: keep the O fully round and give it a colour that matches the l
 | Logo loads, no failed requests, no console errors | Pass |
 | No scroll on the splash | Pass |
 | Chromium installability errors | None |
+
+**Step 2 complete.** Approved by the founder on 26 Nov 2026 ("Step 2 OK").
