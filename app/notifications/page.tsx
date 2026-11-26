@@ -21,7 +21,7 @@ export default function Notifications() {
           <li key={n.id} data-testid="notice" data-unread={!n.read || undefined} className={`flex gap-3 rounded-2xl border p-4 ${n.read ? "border-white/5 bg-white/[0.02]" : "border-white/15 bg-white/[0.06]"}`}>
             <span className="relative mt-0.5 text-white/70">
               <Icon name="bell" className="h-5 w-5" />
-              {!n.read && <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-pink" aria-label="Unread" />}
+              {!n.read && <><span aria-hidden className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-pink" /><span className="sr-only">Unread:</span></>}
             </span>
             <span className="flex-1">
               <span className={`block text-small ${n.read ? "text-white/70" : "font-semibold"}`}>{n.text}</span>
