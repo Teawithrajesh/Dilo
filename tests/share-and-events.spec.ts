@@ -28,7 +28,7 @@ test("shared links carry the DILO image and slogan (link preview tags)", async (
 
 test("the WhatsApp message starts with the DILO slogan", async ({ page }) => {
   await signInAs(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await page.getByRole("link", { name: "Invite" }).click();
   const href = await page.getByRole("link", { name: "Share on WhatsApp" }).first().getAttribute("href");
   const text = decodeURIComponent(href!.split("text=")[1]);
@@ -58,7 +58,7 @@ test("Home always offers 'Start your own community'", async ({ page }) => {
 
 test("a new celebration notifies every member of that community", async ({ page }) => {
   await signInAs(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await page.getByTestId("add-celebration").getByRole("link", { name: "Birthday" }).click();
   await expect(page).toHaveURL(/\/celebrate\/birthday\/\?community=sharma-family$/);
   await expect(page.getByLabel("Community")).toHaveValue("sharma-family");
@@ -94,7 +94,7 @@ test("when someone is approved, the existing members are told", async ({ page })
   await signInAs(page, "Ravi");
   await page.getByRole("button", { name: "Request to join" }).click();
   await switchTo(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await page.getByTestId("admin-panel").click();
   await page.getByRole("button", { name: "Approve" }).click();
   await switchTo(page, "Neha");
@@ -104,7 +104,7 @@ test("when someone is approved, the existing members are told", async ({ page })
 
 test("a past date is refused", async ({ page }) => {
   await signInAs(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await page.getByTestId("add-celebration").getByRole("link", { name: "Wedding" }).click();
   await page.getByLabel("Celebration name").fill("Test");
   await page.getByLabel("Date").fill("2020-01-01");

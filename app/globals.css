@@ -78,3 +78,20 @@
 
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Home: a soft flash each time a new "dream came true" card appears. */
+.dream-flash { animation: dream-in 700ms ease-out both; }
+.dream-shine {
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.22) 45%, transparent 60%);
+  transform: translateX(-100%);
+  animation: dream-shine 1.4s ease-out 0.15s both;
+}
+@keyframes dream-in {
+  0% { opacity: 0; transform: translateY(6px) scale(0.985); box-shadow: 0 0 0 0 rgba(255, 176, 0, 0); }
+  45% { opacity: 1; box-shadow: 0 0 36px 4px rgba(255, 176, 0, 0.45); }
+  100% { opacity: 1; transform: none; box-shadow: 0 0 0 0 rgba(255, 176, 0, 0); }
+}
+@keyframes dream-shine { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) {
+  .dream-flash, .dream-shine { animation: none; }
+}

@@ -19,14 +19,14 @@ async function switchTo(page: Page, name: string) {
 }
 
 async function openSharmaMembers(page: Page) {
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await page.getByTestId("admin-panel").click();
   await expect(page).toHaveURL(/\/community\/members\/\?id=sharma-family$/);
 }
 
 test("owner creates an invite link, shares it and switches it off", async ({ page }) => {
   await signInAs(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await page.getByRole("link", { name: "Invite" }).click();
   await expect(page.getByTestId("invite-link")).toHaveCount(1); // seeded live link
   await page.getByRole("button", { name: "Create new invite link" }).click();
@@ -123,7 +123,7 @@ test("moderator can approve and remove members, but not the owner or roles", asy
 
 test("a member sees no Invite or Manage, and the invite page is closed to them", async ({ page }) => {
   await signInAs(page, "Neha");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByRole("link", { name: "Invite" })).toHaveCount(0);
   await expect(page.getByTestId("admin-panel")).toHaveCount(0);
   await page.goto("/community/invite/?id=sharma-family");
@@ -166,7 +166,7 @@ const png = (name: string) => ({ name, mimeType: "image/png", buffer: PNG });
 
 test("owner adds a cover banner and a community photo", async ({ page }) => {
   await signInAs(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByTestId("cover-image")).toHaveCount(0);
   await page.getByTestId("cover-input").setInputFiles(png("cover.png"));
   await expect(page.getByTestId("cover-image")).toBeVisible();
@@ -179,7 +179,7 @@ test("owner adds a cover banner and a community photo", async ({ page }) => {
 
 test("members can't change community photos; non-images are refused", async ({ page }) => {
   await signInAs(page, "Neha");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByTestId("cover-input")).toHaveCount(0);
   await expect(page.getByTestId("photo-input")).toHaveCount(0);
   await tab(page, "Communities").click();

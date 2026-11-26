@@ -128,13 +128,13 @@ test("reaching the goal shows the celebration and tells every member", async ({ 
   await tab(page, "Notifications").click();
   await expect(page.getByTestId("notice").filter({ hasText: "Dadi's 75th Birthday reached its goal" })).toBeVisible();
   await tab(page, "Communities").click();
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByTestId("feed-item").first()).toContainText("Dadi's 75th Birthday reached its goal");
 });
 
 test("community feed lists activity and opens the event", async ({ page }) => {
   await signInAs(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByTestId("feed-item").first()).toBeVisible();
   await page.getByTestId("feed-item").filter({ hasText: "Anjali's Wedding" }).first().click();
   await expect(page).toHaveURL(/\/event\/\?id=anjali-wedding$/);

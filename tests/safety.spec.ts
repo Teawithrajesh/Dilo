@@ -35,7 +35,7 @@ test("edit profile: name required, name + intro + photo saved", async ({ page })
   await expect(page.getByTestId("avatar-photo").first()).toBeVisible();
   // the new name shows to others too
   await switchTo(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByText("Neha V. Sharma").first()).toBeVisible();
 });
 
@@ -109,7 +109,7 @@ test("report a record → moderator removes it → reporter is told", async ({ p
 
 test("block hides their messages from me; unblock from settings", async ({ page }) => {
   await signInAs(page, "Neha");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await page.getByRole("link", { name: "See all" }).click();
   await page.getByTestId("member").filter({ hasText: "Amit Sharma" }).getByRole("button", { name: "Block" }).click();
   await tab(page, "Home").click();
@@ -138,7 +138,7 @@ test("platform admin: totals and reports only, can't open private communities, c
   await page.getByTestId("admin-community").filter({ hasText: "Sharma Family" }).getByRole("button", { name: "Suspend" }).click();
   await expect(page.getByTestId("admin-community").filter({ hasText: "Sharma Family" })).toContainText("Suspended");
   await switchTo(page, "Priya");
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByTestId("suspended-wall")).toBeVisible();
 });
 

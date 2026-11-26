@@ -21,7 +21,7 @@ export default function Communities() {
         <ul className="space-y-3">
           {myCommunities.map((c) => (
             <li key={c.id}>
-              <Link href={`/community/?id=${c.id}`} className="block overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] transition hover:bg-white/[0.07]">
+              <Link href={`/community/?id=${c.id}`} data-testid="community-link" className="block overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] transition hover:bg-white/[0.07]">
                 <Cover c={c} className="h-24" />
                 <div className="flex items-center gap-3 p-5">
                   <CommunityPhoto c={c} />
