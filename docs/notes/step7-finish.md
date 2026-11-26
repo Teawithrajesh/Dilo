@@ -38,3 +38,5 @@ Founder request: everyone who signs up gets a welcome letter by email that expla
 | Check | Result |
 |---|---|
 | `npm test` (phone + desktop) | **168/168 pass** (adds letter tests; a11y audit now covers `/letter/`) |
+
+**Step 7 complete — Phase 1 complete.** Approved by the founder on 26 Nov 2026 ("Step 7 OK").

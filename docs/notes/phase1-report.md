@@ -1,6 +1,6 @@
 # DILO — Phase 1 report (26 Nov 2026)
 
-**Status:** Phase 1 prototype complete (Steps 0–7), pending the founder's final approval.
+**Status:** Phase 1 prototype **complete** (Steps 0–7). Approved by the founder on 26 Nov 2026.
 **What it is:** a clickable, installable web app (PWA) on **demo data only**. No real accounts, no database, no payments. Everything resets on refresh, except the chosen demo person.
 **Cost so far:** ₹0. No paid service was used.
 
@@ -15,7 +15,7 @@
 | 4 | Demo sign-in (4 people), onboarding, 4 tabs, role-aware screens, premium theme pages, roadmap | 72 |
 | 5 | Invites (WhatsApp, 7-day links), approve/reject, roles, community cover + photo, link previews, celebrations notify every member | 120 |
 | 6 | Wishlist, contribution records, Self-reported/Confirmed, anonymous rule, goal celebration, activity feed | 138 |
-| 7 | Profile edit, privacy settings, report/block, moderation, platform admin, accessibility, speed | **160** |
+| 7 | Profile edit, privacy settings, report/block, moderation, platform admin, accessibility, speed, founder's welcome letter (+ email templates) | **168** |
 
 ## Acceptance checks (blueprint section 8)
 
