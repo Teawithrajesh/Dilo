@@ -48,14 +48,14 @@ export function CommunityView({ id }: { id: string }) {
             label="Change cover photo"
             testId="cover-input"
             onPick={(url) => setCommunityImages(id, { coverImage: url })}
-            className="absolute bottom-3 right-3 inline-flex min-h-11 items-center gap-2 rounded-full bg-black/55 px-4 text-small font-semibold text-white backdrop-blur"
+            className="absolute bottom-3 right-3 z-10 inline-flex min-h-11 items-center gap-2 rounded-full bg-black/55 px-4 text-small font-semibold text-white backdrop-blur"
           >
             <Icon name="camera" className="h-4 w-4" /> {c.coverImage ? "Change cover" : "Add cover"}
           </ImagePick>
         )}
       </div>
-      <div className="relative -mt-12 px-1">
-        <div className="relative inline-block">
+      <div className="pointer-events-none relative -mt-12 px-1">
+        <div className="pointer-events-auto relative inline-block">
           <CommunityPhoto c={c} size="h-24 w-24 text-title" ring />
           {can.editCommunity(role) && (
             <ImagePick

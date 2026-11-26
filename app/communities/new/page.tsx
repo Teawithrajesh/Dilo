@@ -42,13 +42,13 @@ export default function NewCommunity() {
               label="Add cover photo"
               testId="new-cover-input"
               onPick={setCoverImage}
-              className="absolute bottom-3 right-3 inline-flex min-h-11 items-center gap-2 rounded-full bg-black/55 px-4 text-small font-semibold text-white backdrop-blur"
+              className="absolute bottom-3 right-3 z-10 inline-flex min-h-11 items-center gap-2 rounded-full bg-black/55 px-4 text-small font-semibold text-white backdrop-blur"
             >
               <Icon name="camera" className="h-4 w-4" /> {coverImage ? "Change cover" : "Add cover"}
             </ImagePick>
           </div>
-          <div className="relative -mt-10 flex items-end gap-3 px-4 pb-4">
-            <div className="relative">
+          <div className="pointer-events-none relative -mt-10 flex items-end gap-3 px-4 pb-4">
+            <div className="pointer-events-auto relative">
               <CommunityPhoto c={{ gradient, photo, name: name || "New community" }} size="h-20 w-20 text-heading" ring />
               <ImagePick
                 label="Add community photo"

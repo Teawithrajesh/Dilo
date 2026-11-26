@@ -39,3 +39,13 @@ Founder feedback: community creators should be able to add their own image and a
 |---|---|
 | Build | Pass |
 | `npm test` (phone + desktop) | **100/100 pass** (adds: owner adds cover + photo, members can't, non-image refused, create with images) |
+
+## Fix (26 Nov 2026): "Add cover photo" did not respond on the phone
+- Cause: the community-photo row is pulled up over the bottom of the cover (Facebook-style overlap). That invisible row sat on top of the **Add cover** button and swallowed the tap. Same on the create-community preview.
+- Why tests missed it: they put the file straight into the hidden input instead of tapping the button.
+- Fix: the overlapping row lets taps pass through (`pointer-events-none`, with the photo itself still tappable) and the cover button is raised (`z-10`).
+- New `tests/tap-upload.spec.ts` taps the real buttons and waits for the phone's file picker: failed before the fix (Playwright: "…intercepts pointer events"), passes after.
+
+| Check | Result |
+|---|---|
+| `npm test` (phone + desktop) | **106/106 pass** |
