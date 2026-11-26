@@ -4,7 +4,7 @@
 // except which demo person you picked (kept for this browser tab only).
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import * as seed from "./data";
-import type { Community, CommunityType, DemoEvent, InviteLink, Membership, Notice, Person, PersonId, Role } from "./data";
+import type { Activity, Community, CommunityType, Contribution, DemoEvent, InviteLink, Membership, Notice, Person, PersonId, Priority, Role, Wish } from "./data";
 import type { CelebrationSlug } from "@/lib/celebrations";
 import { can } from "@/lib/permissions";
 
@@ -54,6 +54,18 @@ type DemoState = {
   removeMember: (communityId: string, personId: PersonId) => Result;
   leave: (communityId: string) => Result;
   markAllRead: () => void;
+  // Step 6: wishlist, contributions, feed
+  isOrganiser: (eventId: string) => boolean;
+  wishesFor: (eventId: string) => Wish[];
+  addWish: (eventId: string, w: { title: string; cost: number; priority: Priority; link?: string }) => Result;
+  updateWish: (wishId: string, patch: Partial<Pick<Wish, "title" | "cost" | "priority" | "link">>) => Result;
+  moveWish: (wishId: string, dir: -1 | 1) => void;
+  toggleFulfilled: (wishId: string) => void;
+  contributionsFor: (eventId: string) => (Contribution & { shownName: string; isMine: boolean })[];
+  recordContribution: (eventId: string, c: { amount: number; wishId?: string; message?: string; anonymous: boolean }) => Result;
+  confirmContribution: (contributionId: string) => Result;
+  removeContribution: (contributionId: string) => Result;
+  feed: (communityId: string) => Activity[];
 };
 
 const Ctx = createContext<DemoState | null>(null);
@@ -79,6 +91,9 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [requests, setRequests] = useState<JoinRequest[]>([]);
   const [notices, setNotices] = useState<Notice[]>(seed.notices);
   const [events, setEvents] = useState<DemoEvent[]>(seed.events);
+  const [wishes, setWishes] = useState<Wish[]>(seed.wishes);
+  const [contribs, setContribs] = useState<Contribution[]>(seed.contributions);
+  const [activity, setActivity] = useState<Activity[]>(seed.activity);
 
   useEffect(() => {
     try {
@@ -109,6 +124,24 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     const myCommunities = communities.filter((c) => roleIn(c.id) !== null);
     const today = new Date().toISOString().slice(0, 10);
     const myNotices = notices.filter((n) => n.personId === meId);
+    // "Recorded" always comes from the contribution records (self-reported + confirmed).
+    const recordedFor = (eid: string) => contribs.filter((c) => c.eventId === eid).reduce((t, c) => t + c.amount, 0);
+    const liveEvents = events.map((e) => ({ ...e, recorded: recordedFor(e.id) }));
+    const findEvent = (eid: string) => liveEvents.find((e) => e.id === eid);
+    const isOrganiser = (eid: string) => {
+      const e = findEvent(eid);
+      if (!e || !meId) return false;
+      const r = roleOf(e.communityId, meId);
+      return r !== null && (e.createdBy === meId || r === "owner" || r === "admin");
+    };
+    const organisersOf = (e: DemoEvent) =>
+      memberships
+        .filter((m) => m.communityId === e.communityId && (m.personId === e.createdBy || m.role === "owner" || m.role === "admin"))
+        .map((m) => m.personId);
+    const log = (communityId: string, text: string, eventId?: string) =>
+      setActivity((a) => [{ id: `a-${Date.now()}-${a.length}`, communityId, text, when: "Just now", eventId }, ...a]);
+    const inr = (n: number) => "₹" + n.toLocaleString("en-IN");
+
     const ownersOf = (cid: string) => memberships.filter((m) => m.communityId === cid && m.role === "owner");
 
     const notify = (personIds: PersonId[], text: string) =>
@@ -150,9 +183,9 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         memberships.filter((m) => m.communityId === cid).map((m) => ({ ...m, person: person(m.personId) })),
       myCommunities,
       memberCount: (cid) => memberships.filter((m) => m.communityId === cid).length + (seed.extraMemberCounts[cid] ?? 0),
-      event: (id) => events.find((e) => e.id === id),
-      eventsIn: (cid) => events.filter((e) => e.communityId === cid),
-      myUpcoming: events
+      event: (id) => findEvent(id),
+      eventsIn: (cid) => liveEvents.filter((e) => e.communityId === cid),
+      myUpcoming: liveEvents
         .filter((e) => roleIn(e.communityId) !== null && e.date >= today)
         .sort((a, b) => a.date.localeCompare(b.date)),
       myInvites: seed.invites
@@ -190,6 +223,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         const others = memberships.filter((m) => m.communityId === communityId && m.personId !== meId).map((m) => m.personId);
         const when = new Date(date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
         notify(others, `${person(meId).short} added a new celebration in ${community(communityId)?.name}: ${title.trim()} on ${when}.`);
+        log(communityId, `${person(meId).short} created ${title.trim()}.`, id);
         return { ok: true, id };
       },
 
@@ -232,6 +266,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
           setMemberships((m) => [...m, { communityId: cid, personId: pid, role: "member" }]);
           notify([pid], `Welcome! You are now a member of ${name}.`);
           notify(existing, `${person(pid).name} joined ${name}.`);
+          log(cid, `${person(pid).name} joined the community.`);
         } else {
           notify([pid], `Your request to join ${name} was not approved.`);
         }
@@ -265,8 +300,105 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       },
 
       markAllRead: () => setNotices((n) => n.map((x) => (x.personId === meId ? { ...x, read: true } : x))),
+
+      isOrganiser,
+      wishesFor: (eid) => wishes.filter((w) => w.eventId === eid).sort((a, b) => a.position - b.position),
+
+      addWish: (eid, w) => {
+        if (!isOrganiser(eid)) return { ok: false, error: "Only the organiser can add wishes." };
+        if (!w.title.trim()) return { ok: false, error: "Please name the wish." };
+        if (!Number.isInteger(w.cost) || w.cost <= 0) return { ok: false, error: "Please enter the cost in whole rupees." };
+        const pos = Math.max(0, ...wishes.filter((x) => x.eventId === eid).map((x) => x.position)) + 1;
+        setWishes((list) => [...list, { id: `w-${Date.now()}`, eventId: eid, title: w.title.trim(), cost: w.cost, priority: w.priority, link: w.link?.trim() || undefined, fulfilled: false, position: pos }]);
+        const e = findEvent(eid)!;
+        log(e.communityId, `${person(meId!).short} added a wish to ${e.title}: ${w.title.trim()}.`, eid);
+        return { ok: true };
+      },
+
+      updateWish: (wid, patch) => {
+        const w = wishes.find((x) => x.id === wid);
+        if (!w || !isOrganiser(w.eventId)) return { ok: false, error: "Only the organiser can edit wishes." };
+        if (patch.title !== undefined && !patch.title.trim()) return { ok: false, error: "Please name the wish." };
+        if (patch.cost !== undefined && (!Number.isInteger(patch.cost) || patch.cost <= 0)) return { ok: false, error: "Please enter the cost in whole rupees." };
+        setWishes((list) => list.map((x) => (x.id === wid ? { ...x, ...patch, title: (patch.title ?? x.title).trim() } : x)));
+        return { ok: true };
+      },
+
+      moveWish: (wid, dir) => {
+        const w = wishes.find((x) => x.id === wid);
+        if (!w || !isOrganiser(w.eventId)) return;
+        const sorted = wishes.filter((x) => x.eventId === w.eventId).sort((a, b) => a.position - b.position);
+        const i = sorted.findIndex((x) => x.id === wid);
+        const j = i + dir;
+        if (j < 0 || j >= sorted.length) return;
+        const a = sorted[i], b = sorted[j];
+        setWishes((list) => list.map((x) => (x.id === a.id ? { ...x, position: b.position } : x.id === b.id ? { ...x, position: a.position } : x)));
+      },
+
+      toggleFulfilled: (wid) => {
+        const w = wishes.find((x) => x.id === wid);
+        if (!w || !isOrganiser(w.eventId)) return;
+        setWishes((list) => list.map((x) => (x.id === wid ? { ...x, fulfilled: !x.fulfilled } : x)));
+        if (!w.fulfilled) {
+          const e = findEvent(w.eventId)!;
+          log(e.communityId, `${w.title} is now covered for ${e.title}. 🎉`, e.id);
+        }
+      },
+
+      contributionsFor: (eid) => {
+        const e = findEvent(eid);
+        const org = isOrganiser(eid);
+        return contribs
+          .filter((c) => c.eventId === eid)
+          .map((c) => {
+            const isMine = c.personId === meId;
+            const realName = c.personId === "sample" ? c.sampleName ?? "Sample guest" : person(c.personId).name;
+            // Anonymous: only the contributor and the organiser see the name.
+            const shownName = c.anonymous && !isMine && !org ? "Anonymous" : realName;
+            return { ...c, shownName, isMine };
+          })
+          .reverse()
+          .filter(() => !!e);
+      },
+
+      recordContribution: (eid, c) => {
+        const e = findEvent(eid);
+        if (!e || !meId || roleIn(e.communityId) === null) return { ok: false, error: "Only members can record a contribution." };
+        if (!Number.isInteger(c.amount) || c.amount <= 0) return { ok: false, error: "Please enter the amount in whole rupees." };
+        if (c.amount > 1_00_00_000) return { ok: false, error: "Please enter an amount up to ₹1,00,00,000." };
+        setContribs((list) => [...list, { id: `c-${Date.now()}`, eventId: eid, personId: meId, amount: c.amount, wishId: c.wishId || undefined, message: c.message?.trim() || undefined, anonymous: c.anonymous, status: "self_reported", when: "Just now" }]);
+        const who = c.anonymous ? "Someone" : person(meId).short;
+        log(e.communityId, `${who} recorded a contribution to ${e.title}.`, eid);
+        notify(organisersOf(e).filter((p) => p !== meId), `${c.anonymous ? "Someone (anonymous)" : person(meId).name} recorded ${inr(c.amount)} for ${e.title}. Please confirm when you can.`);
+        const total = e.recorded + c.amount;
+        if (total >= e.goal && !e.celebrated) {
+          setEvents((list) => list.map((x) => (x.id === eid ? { ...x, celebrated: true } : x)));
+          const all = memberships.filter((m) => m.communityId === e.communityId).map((m) => m.personId);
+          notify(all, `🎉 ${e.title} reached its goal! Thank you, everyone.`);
+          log(e.communityId, `🎉 ${e.title} reached its goal!`, eid);
+        }
+        return { ok: true };
+      },
+
+      confirmContribution: (id) => {
+        const c = contribs.find((x) => x.id === id);
+        if (!c || !isOrganiser(c.eventId)) return { ok: false, error: "Only the organiser can confirm." };
+        setContribs((list) => list.map((x) => (x.id === id ? { ...x, status: "confirmed" } : x)));
+        const e = findEvent(c.eventId)!;
+        if (c.personId !== "sample") notify([c.personId], `${person(meId!).short} confirmed your contribution to ${e.title}. Thank you!`);
+        return { ok: true };
+      },
+
+      removeContribution: (id) => {
+        const c = contribs.find((x) => x.id === id);
+        if (!c || c.personId !== meId || c.status !== "self_reported") return { ok: false, error: "You can only remove your own record before it's confirmed." };
+        setContribs((list) => list.filter((x) => x.id !== id));
+        return { ok: true };
+      },
+
+      feed: (cid) => activity.filter((a) => a.communityId === cid),
     };
-  }, [ready, meId, communities, memberships, links, requests, notices, events, signIn, signOut]);
+  }, [ready, meId, communities, memberships, links, requests, notices, events, wishes, contribs, activity, signIn, signOut]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
