@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* Colours sampled from the logo concept (docs/brand). Final values are set in Step 2. */
+@theme {
+  --color-navy: #0a1440;
+  --color-pink: #fd216e;
+  --color-violet: #3a1ecf;
+  --color-orange: #fe8f02;
+  --color-gold: #ffb000;
+  --color-mist: #f7f5fb;
+}
+
+body {
+  background: var(--color-mist);
+  color: var(--color-navy);
+}
