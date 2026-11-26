@@ -63,3 +63,5 @@ Founder feedback: (1) a shared link should show the DILO image and slogan; (2) s
 |---|---|
 | Build | Pass |
 | `npm test` (phone + desktop) | **120/120 pass** (adds: preview tags + share image, WhatsApp text has slogan, invitee creates own community, Home offer, new celebration notifies Neha + Amit and not Ravi, join notice to members, past date refused) |
+
+**Step 5 complete.** Approved by the founder on 26 Nov 2026 ("Step 5 OK").
