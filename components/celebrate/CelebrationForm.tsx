@@ -10,7 +10,7 @@ const MAX_WISH = 300;
 const MAX_BUDGET = 1_00_00_000; // ₹1 crore
 
 /** Picks an image and shows it inside a themed frame. The file never leaves the phone. */
-function FramedUpload({
+export function FramedUpload({
   label,
   hint,
   shape,

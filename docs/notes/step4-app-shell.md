@@ -25,3 +25,13 @@ Built:
 | App screens: banner, no side-scroll, 44 px targets, no console errors | Pass |
 
 Not in this step: approving/rejecting requests, inviting, roles changes (Step 5); event details, wishlist, contributions (Step 6); profile editing and privacy settings (Step 7).
+
+## Revision 1 (26 Nov 2026): event cards open
+Founder feedback: "koi bhi event khul nahi raha" — event cards were not tappable (event pages were planned for Step 6).
+- Every event card now opens `/events/<id>/` in its celebration theme (Birthday/Engagement/Wedding/Anniversary background): title, date, community, days to go, progress (self-reported, "DILO never handles money"), photo frame, invitation-card frame, dream wish, estimated budget.
+- Non-members see a private wall. Wishlist and contributions remain for Step 6.
+
+| Check | Result |
+|---|---|
+| Build | Pass (20 pages) |
+| `npm test` (phone + desktop) | **72/72 pass** (adds: event card opens, every card opens and Back returns, Ravi can't open a private event) |

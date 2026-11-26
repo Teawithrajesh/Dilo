@@ -121,3 +121,34 @@ test("app screens: banner, no side-scroll, 44 px tap targets, no console errors"
   }
   expect(errors).toEqual([]);
 });
+
+test("tapping an event card opens its themed event page", async ({ page }) => {
+  await signInAs(page, "Neha");
+  await page.getByTestId("event-card").filter({ hasText: "Anjali's Wedding" }).click();
+  await expect(page).toHaveURL(/\/events\/anjali-wedding\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Anjali's Wedding");
+  await expect(page.getByTestId("dream")).toContainText("photography");
+  await expect(page.getByText("₹1,50,000").first()).toBeVisible();
+  await page.getByRole("button", { name: "Back" }).click();
+  await expect(page).toHaveURL(/\/home\/$/);
+});
+
+test("every event card on Home and community pages opens", async ({ page }) => {
+  await signInAs(page, "Priya");
+  const n = await page.getByTestId("event-card").count();
+  expect(n).toBeGreaterThan(0);
+  for (let i = 0; i < n; i++) {
+    await page.getByTestId("event-card").nth(i).click();
+    await expect(page).toHaveURL(/\/events\/[a-z-]+\/$/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await page.getByRole("button", { name: "Back" }).click();
+    await expect(page).toHaveURL(/\/home\/$/);
+  }
+});
+
+test("newcomer Ravi cannot open a private event", async ({ page }) => {
+  await signInAs(page, "Ravi");
+  await page.goto("/events/anjali-wedding/");
+  await expect(page.getByTestId("private-wall")).toBeVisible();
+  await expect(page.getByTestId("dream")).toHaveCount(0);
+});
