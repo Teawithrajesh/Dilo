@@ -35,17 +35,40 @@ h1, h2, h3 {
   font-family: var(--font-display);
 }
 
-/* Splash: a slow, soft glow around the O so people know it can be tapped. */
-.o-hotspot {
-  box-shadow: 0 0 0 0 rgba(253, 46, 122, 0);
-  animation: o-glow 2.8s ease-in-out infinite;
+/* Splash: the O is a raised key. A darker "side" under it makes it stand up from the page. */
+.o-key {
+  transform: translateY(-3px);
+  transition: transform 110ms ease, filter 110ms ease;
+  /* One thin darker edge under the O (like a key's side) + a soft shadow on the page. */
+  filter:
+    drop-shadow(0 3px 0 #a3134b)
+    drop-shadow(0 8px 10px rgba(0, 0, 0, 0.45));
+  -webkit-tap-highlight-color: transparent;
+  animation: o-breathe 2.6s ease-in-out infinite;
 }
-@keyframes o-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 154, 31, 0), inset 0 0 0 0 rgba(255, 154, 31, 0); }
-  50% { box-shadow: 0 0 16px 1px rgba(255, 154, 31, 0.3), inset 0 0 10px 0 rgba(255, 154, 31, 0.18); }
+.o-key:hover { transform: translateY(-4px); }
+.o-key[data-pressed] {
+  transform: translateY(0) scale(0.97);
+  animation: none;
+  filter:
+    drop-shadow(0 1px 0 #a3134b)
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 16px rgba(255, 154, 31, 0.55));
+}
+.o-key__shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.12) 38%, transparent 55%);
+  -webkit-mask: url(/brand/dilo-o.png) center / 100% 100% no-repeat;
+  mask: url(/brand/dilo-o.png) center / 100% 100% no-repeat;
+}
+@keyframes o-breathe {
+  0%, 100% { transform: translateY(-3px); }
+  50% { transform: translateY(-4.5px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .o-hotspot { animation: none; }
+  .o-key { animation: none; }
 }
 
 html { scroll-behavior: smooth; }

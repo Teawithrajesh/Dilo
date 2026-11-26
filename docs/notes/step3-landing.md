@@ -45,3 +45,17 @@ Founder feedback: only Birthday, Engagement, Wedding (+ Anniversary, confirmed);
 | Non-image file refused | Pass |
 | Wish + budget required; budget keeps digits only | Pass |
 | Back → celebrations section | Pass |
+
+## Revision 2 (26 Nov 2026): the O is a raised key with sound
+Founder feedback: people can't tell where to press; make the O look raised like a button, play a smooth sound when pressed, keep the O looking as it does.
+- Logo split into `dilo-logo-dil.png` (without the O) and `dilo-o.png`; on the splash the O sits on top as a **raised key**: a thin darker edge under it, a soft shadow, a glossy top light, and a gentle up-down "breathing" (off when the phone asks for reduced motion).
+- Press: the O sinks (`translateY(0) scale(.97)`) and glows; a **soft two-note chime** plays (made in the browser with Web Audio, no sound file); a 12 ms vibration on Android; the landing page opens after ~260 ms.
+- Hint text: "Press the O to begin".
+- Bug found and fixed while testing: the press state blocked the click, so the page did not open.
+
+| Check | Result |
+|---|---|
+| Build | Pass |
+| `npm test` (phone + desktop) | **44/44 pass** (adds: press the O while it moves) |
+| Screenshot: O raised vs pressed | Checked |
+| Sound / vibration | Not testable by the robot; the owner checks on the phone |

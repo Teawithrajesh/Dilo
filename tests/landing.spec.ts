@@ -5,10 +5,18 @@ async function noHorizontalScroll(page: Page) {
 }
 
 test.describe("splash", () => {
+  test("pressing the O while it gently moves still opens the app", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Enter DILO" }).click({ force: true });
+    await expect(page).toHaveURL(/\/welcome\/$/);
+  });
+
   test("tapping the O opens the landing page", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" }); // no breathing animation
     await page.goto("/");
     await expect(page.getByRole("status")).toContainText("DEMO DATA");
     await page.getByRole("link", { name: "Enter DILO" }).click();
+    // the O sinks, a chime plays, then the app opens (~260 ms)
     await expect(page).toHaveURL(/\/welcome\/$/);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("ordinary gifts");
   });
