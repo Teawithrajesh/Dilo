@@ -15,7 +15,7 @@ async function signInAs(page: Page, name: string, { skipOnboarding = true } = {}
 const tab = (page: Page, name: string) => page.getByRole("navigation", { name: "App" }).getByRole("link", { name: new RegExp(`${name}$`) });
 
 test("signed-out visitors are sent to demo sign-in", async ({ page }) => {
-  for (const path of ["/home/", "/communities/", "/notifications/", "/profile/", "/communities/sharma-family/"]) {
+  for (const path of ["/home/", "/communities/", "/notifications/", "/profile/", "/community/?id=sharma-family"]) {
     await page.goto(path);
     await expect(page, path).toHaveURL(/\/signin\/$/);
   }
@@ -57,16 +57,16 @@ test("Owner Priya: sees Sharma Family, its celebrations and the join-requests pa
 
 test("Moderator Amit: can see join requests", async ({ page }) => {
   await signInAs(page, "Amit");
-  await page.goto("/communities/sharma-family/");
+  await page.goto("/community/?id=sharma-family");
   await expect(page.getByTestId("admin-panel")).toBeVisible();
 });
 
 test("Member Neha: no join-requests panel in Sharma Family, but owner of Delhi Friends", async ({ page }) => {
   await signInAs(page, "Neha");
-  await page.goto("/communities/sharma-family/");
+  await page.goto("/community/?id=sharma-family");
   await expect(page.getByTestId("event-card").first()).toBeVisible();
   await expect(page.getByTestId("admin-panel")).toHaveCount(0);
-  await page.goto("/communities/delhi-friends/");
+  await page.goto("/community/?id=delhi-friends");
   await expect(page.getByTestId("admin-panel")).toBeVisible();
 });
 
@@ -74,7 +74,7 @@ test("Newcomer Ravi: sees only the invite (name + cover), not the private commun
   await signInAs(page, "Ravi");
   await expect(page.getByTestId("invite-card")).toContainText("Sharma Family");
   await expect(page.getByTestId("event-card")).toHaveCount(0);
-  await page.goto("/communities/sharma-family/");
+  await page.goto("/community/?id=sharma-family");
   await expect(page.getByTestId("private-wall")).toBeVisible();
   await expect(page.getByTestId("event-card")).toHaveCount(0);
   await expect(page.getByText("Anjali's Wedding")).toHaveCount(0);
@@ -85,7 +85,7 @@ test("Ravi requests to join, then Priya sees 1 waiting request", async ({ page }
   await page.getByRole("button", { name: "Request to join" }).click();
   await expect(page.getByTestId("invite-card")).toContainText("Request sent");
   await tab(page, "Notifications").click();
-  await expect(page.getByTestId("notice").first()).toContainText("request to join was sent");
+  await expect(page.getByTestId("notice").first()).toContainText(/request to join Sharma Family was sent/);
   // switch person without reloading (demo state lives in this tab)
   await tab(page, "Profile").click();
   await page.getByRole("button", { name: "Switch demo person" }).click();
@@ -109,7 +109,7 @@ test("app screens: banner, no side-scroll, 44 px tap targets, no console errors"
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   await signInAs(page, "Priya");
-  for (const path of ["/home/", "/communities/", "/communities/sharma-family/", "/notifications/", "/profile/"]) {
+  for (const path of ["/home/", "/communities/", "/community/?id=sharma-family", "/notifications/", "/profile/"]) {
     await page.goto(path); // the chosen person is kept for this tab
     await expect(page.locator("main")).toBeVisible();
     await expect(page.getByRole("status").first()).toContainText("DEMO DATA");

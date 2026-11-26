@@ -1,6 +1,6 @@
-:HL["/_next/static/chunks/33qst4gpo0xd0.css","style"]
+:HL["/_next/static/chunks/2ppf1o0tz6mp2.css","style"]
 :HC["/",""]
 3:[["children",{"s":"__PAGE__","h":160}]]
 2:[["children",{"s":{"n":"id","t":"d","k":"anjali-wedding","s":[]},"h":65632,"c":"$Q3"}]]
 1:[["children",{"s":"events","h":131168,"c":"$Q2"}]]
-0:{"b":"-D9pldbuPq3i4SZyG2sMg","t":{"t":{"s":"","h":131152,"c":"$Q1"}}}
+0:{"b":"Xfj1jc5jgBnJdaLlMiibV","t":{"t":{"s":"","h":131152,"c":"$Q1"}}}

@@ -13,6 +13,9 @@ export default function SignIn() {
 
   function pick(id: (typeof people)[number]["id"]) {
     signIn(id);
+    const next = new URLSearchParams(window.location.search).get("next");
+    // Only follow internal paths (never another website)
+    if (next && next.startsWith("/") && !next.startsWith("//")) return router.push(next);
     let seen = false;
     try { seen = sessionStorage.getItem("dilo-onboarded") === "1"; } catch { /* ignore */ }
     router.push(seen ? "/home/" : "/onboarding/");

@@ -48,7 +48,7 @@ export function AppShell({ title, children }: { title: string; children: React.R
       <nav aria-label="App" className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-navy/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
         <ul className="mx-auto grid max-w-2xl grid-cols-4">
           {tabs.map((t) => {
-            const active = path === t.href || (t.href !== "/home/" && path.startsWith(t.href));
+            const active = path === t.href || (t.href !== "/home/" && path.startsWith(t.href)) || (t.href === "/communities/" && path.startsWith("/community"));
             return (
               <li key={t.href}>
                 <Link

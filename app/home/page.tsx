@@ -52,7 +52,7 @@ export default function Home() {
         <ul className="grid gap-3 sm:grid-cols-2">
           {myCommunities.map((c) => (
             <li key={c.id}>
-              <Link href={`/communities/${c.id}/`} className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]">
+              <Link href={`/community/?id=${c.id}`} className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]">
                 <span className={`h-12 w-12 shrink-0 rounded-2xl bg-gradient-to-br ${c.gradient}`} aria-hidden />
                 <span className="min-w-0">
                   <span className="block font-display font-bold">{c.name}</span>
