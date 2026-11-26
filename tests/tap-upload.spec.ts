@@ -18,7 +18,7 @@ async function tapAndPick(page: Page, label: string) {
 
 test("tapping Add cover and the photo camera opens the picker (community page)", async ({ page }) => {
   await signInAsPriya(page);
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await tapAndPick(page, "Change cover photo");
   await expect(page.getByTestId("cover-image")).toBeVisible();
   await tapAndPick(page, "Change community photo");

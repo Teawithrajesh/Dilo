@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
+import { DreamsSpotlight } from "@/components/app/DreamsSpotlight";
 import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
 import { EventCard, SectionTitle } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
@@ -14,6 +15,8 @@ export default function Home() {
     <AppShell title="Home">
       <p className="text-white/70">Namaste,</p>
       <p className="font-display text-title font-extrabold">{me?.short} 👋</p>
+
+      <DreamsSpotlight />
 
       {d_isAdmin && (
         <Link href="/admin/" className="mt-6 flex items-center justify-between rounded-3xl border border-gold/40 bg-gold/10 p-5" data-testid="admin-card">
@@ -63,7 +66,7 @@ export default function Home() {
         <ul className="grid gap-3 sm:grid-cols-2">
           {myCommunities.map((c) => (
             <li key={c.id}>
-              <Link href={`/community/?id=${c.id}`} className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]">
+              <Link href={`/community/?id=${c.id}`} data-testid="community-link" className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]">
                 <CommunityPhoto c={c} />
                 <span className="min-w-0">
                   <span className="block font-display font-bold">{c.name}</span>

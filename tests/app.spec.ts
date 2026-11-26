@@ -50,7 +50,7 @@ test("bottom tabs open each section and mark the active one", async ({ page }) =
 test("Owner Priya: sees Sharma Family, its celebrations and the join-requests panel", async ({ page }) => {
   await signInAs(page, "Priya");
   await expect(page.getByText("Pending invites")).toHaveCount(0);
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByTestId("admin-panel")).toBeVisible();
   await expect(page.getByTestId("event-card")).toHaveCount(3);
 });
@@ -91,7 +91,7 @@ test("Ravi requests to join, then Priya sees 1 waiting request", async ({ page }
   await page.getByRole("button", { name: "Switch demo person" }).click();
   await page.getByRole("button", { name: /^Priya Sharma/ }).click();
   await expect(page).toHaveURL(/\/home\/$/); // already onboarded in this tab
-  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).first().click();
   await expect(page.getByTestId("request-count")).toHaveText("1");
 });
 

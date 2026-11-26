@@ -13,6 +13,8 @@ const INVITE_DAYS = 7;
 
 type JoinRequest = { communityId: string; personId: PersonId };
 
+export type DreamCameTrue = { id: string; kind: "wish" | "goal"; title: string; eventId: string; eventTitle: string; eventKind: DemoEvent["kind"]; communityName: string; at: number };
+
 export type InviteCheck =
   | { ok: true; link: InviteLink; community: Community }
   | { ok: false; reason: "not-found" | "expired" | "revoked" | "used-up"; community?: Community };
@@ -66,6 +68,8 @@ type DemoState = {
   confirmContribution: (contributionId: string) => Result;
   removeContribution: (contributionId: string) => Result;
   feed: (communityId: string) => Activity[];
+  /** Wishes and goals that came true, in my communities only, newest first. */
+  dreamsCameTrue: DreamCameTrue[];
   // Step 7: profile, privacy, safety, admin
   person: (id: PersonId) => Person;
   updateProfile: (p: { name?: string; bio?: string; photo?: string }) => Result;
@@ -381,7 +385,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       toggleFulfilled: (wid) => {
         const w = wishes.find((x) => x.id === wid);
         if (!w || !isOrganiser(w.eventId)) return;
-        setWishes((list) => list.map((x) => (x.id === wid ? { ...x, fulfilled: !x.fulfilled } : x)));
+        setWishes((list) => list.map((x) => (x.id === wid ? { ...x, fulfilled: !x.fulfilled, fulfilledAt: x.fulfilled ? undefined : Date.now() } : x)));
         if (!w.fulfilled) {
           const e = findEvent(w.eventId)!;
           log(e.communityId, `${w.title} is now covered for ${e.title}. 🎉`, e.id);
@@ -416,7 +420,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         notify(organisersOf(e).filter((p) => p !== meId), `${c.anonymous ? "Someone (anonymous)" : person(meId).name} recorded ${inr(c.amount)} for ${e.title}. Please confirm when you can.`);
         const total = e.recorded + c.amount;
         if (total >= e.goal && !e.celebrated) {
-          setEvents((list) => list.map((x) => (x.id === eid ? { ...x, celebrated: true } : x)));
+          setEvents((list) => list.map((x) => (x.id === eid ? { ...x, celebrated: true, celebratedAt: Date.now() } : x)));
           const all = memberships.filter((m) => m.communityId === e.communityId).map((m) => m.personId);
           notify(all, `🎉 ${e.title} reached its goal! Thank you, everyone.`);
           log(e.communityId, `🎉 ${e.title} reached its goal!`, eid);
@@ -441,6 +445,17 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       },
 
       feed: (cid) => activity.filter((a) => a.communityId === cid),
+
+      dreamsCameTrue: [
+        ...wishes
+          .filter((w) => w.fulfilled)
+          .map((w) => ({ w, e: findEvent(w.eventId) }))
+          .filter(({ e }) => e && roleIn(e.communityId) !== null)
+          .map(({ w, e }) => ({ id: `wish-${w.id}`, kind: "wish" as const, title: w.title, eventId: e!.id, eventTitle: e!.title, eventKind: e!.kind, communityName: community(e!.communityId)?.name ?? "", at: w.fulfilledAt ?? 0 })),
+        ...liveEvents
+          .filter((e) => e.recorded >= e.goal && roleIn(e.communityId) !== null)
+          .map((e) => ({ id: `goal-${e.id}`, kind: "goal" as const, title: e.dream, eventId: e.id, eventTitle: e.title, eventKind: e.kind, communityName: community(e.communityId)?.name ?? "", at: e.celebratedAt ?? 0 })),
+      ].sort((a, b) => b.at - a.at),
 
       person,
       updateProfile: ({ name, bio, photo }) => {

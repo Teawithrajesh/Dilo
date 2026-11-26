@@ -30,6 +30,7 @@ export type DemoEvent = {
   createdBy?: PersonId; // the organiser
   sample?: boolean;
   celebrated?: boolean; // goal reached and celebrated
+  celebratedAt?: number;
   removed?: boolean; // taken down by a moderator
   /** Local preview links picked on this phone (never uploaded in the demo). */
   photo?: string;
@@ -100,7 +101,7 @@ export const coverChoices = [
 ];
 
 export type Priority = "high" | "medium" | "low";
-export type Wish = { id: string; eventId: string; title: string; cost: number; priority: Priority; link?: string; fulfilled: boolean; position: number };
+export type Wish = { id: string; eventId: string; title: string; cost: number; priority: Priority; link?: string; fulfilled: boolean; position: number; fulfilledAt?: number };
 export type ContributionStatus = "self_reported" | "confirmed";
 /** A record of a gift given OUTSIDE DILO (cash, UPI, bank). DILO never handles money. */
 export type Contribution = { id: string; eventId: string; personId: PersonId | "sample"; sampleName?: string; amount: number; wishId?: string; message?: string; anonymous: boolean; status: ContributionStatus; when: string };
@@ -108,9 +109,9 @@ export type Activity = { id: string; communityId: string; text: string; when: st
 
 export const wishes: Wish[] = [
   { id: "w1", eventId: "anjali-wedding", title: "Wedding photography", cost: 60000, priority: "high", fulfilled: false, position: 1 },
-  { id: "w2", eventId: "anjali-wedding", title: "Mehendi decor", cost: 25000, priority: "medium", fulfilled: true, position: 2 },
+  { id: "w2", eventId: "anjali-wedding", title: "Mehendi decor", cost: 25000, priority: "medium", fulfilled: true, position: 2, fulfilledAt: Date.now() - 2 * 86_400_000 },
   { id: "w3", eventId: "anjali-wedding", title: "Bridal lehenga alteration", cost: 15000, priority: "medium", fulfilled: false, position: 3 },
-  { id: "w4", eventId: "dadi-birthday", title: "Reading glasses", cost: 6000, priority: "high", fulfilled: true, position: 1 },
+  { id: "w4", eventId: "dadi-birthday", title: "Reading glasses", cost: 6000, priority: "high", fulfilled: true, position: 1, fulfilledAt: Date.now() - 4 * 86_400_000 },
   { id: "w5", eventId: "dadi-birthday", title: "Family lunch", cost: 30000, priority: "medium", fulfilled: false, position: 2 },
   { id: "w6", eventId: "parents-anniversary", title: "Surprise dinner", cost: 35000, priority: "high", fulfilled: false, position: 1 },
   { id: "w7", eventId: "parents-anniversary", title: "Photo album", cost: 8000, priority: "low", fulfilled: false, position: 2 },
