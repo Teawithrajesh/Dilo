@@ -28,3 +28,13 @@ Built (demo data, this browser tab only):
 
 Found and fixed while testing: after "Delete my account" the app jumped to sign-in instead of the welcome page (sign-out now happens on arrival).
 Not checkable by a robot: TalkBack reading order on a real phone — owner check.
+
+## Revision 1 (26 Nov 2026): the founder's welcome letter
+Founder request: everyone who signs up gets a welcome letter by email that explains why DILO exists (pool the family's love into the one dream the person really wants, instead of many gifts that go unused), encourages them, and reads like a person wrote it.
+- Text: `lib/welcomeLetter.ts`, English + Hindi, signed by Raj (founder). Plain, personal, concrete examples (dinner sets, wall clocks, Dadi's glasses), the privacy and "DILO never touches your money" promises, and one small action to try today.
+- In the demo: on a person's first sign-in a notification "📩 A welcome letter from Raj" opens `/letter/`, shown as a letter on paper with an English/हिंदी switch. Sent once per person.
+- Email: `emails/welcome.{en,hi}.{html,txt}` built from the same text by `scripts/build-emails.mjs` (`{{first_name}}` placeholder). **Not sent yet**: needs real sign-up and an email service (Phase 2, approval first).
+
+| Check | Result |
+|---|---|
+| `npm test` (phone + desktop) | **168/168 pass** (adds letter tests; a11y audit now covers `/letter/`) |

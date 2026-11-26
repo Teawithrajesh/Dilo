@@ -74,7 +74,7 @@ test("approve: Ravi becomes a member and can see the celebrations", async ({ pag
   await expect(page.getByTestId("invite-card")).toHaveCount(0);
   await expect(page.getByTestId("event-card").first()).toBeVisible();
   await tab(page, "Notifications").click();
-  await expect(page.getByTestId("notice").first()).toContainText("Welcome! You are now a member of Sharma Family");
+  await expect(page.getByTestId("notice").filter({ hasText: "Welcome! You are now a member of Sharma Family" }).first()).toBeVisible();
 });
 
 test("reject: Ravi stays outside and is told", async ({ page }) => {
@@ -87,7 +87,7 @@ test("reject: Ravi stays outside and is told", async ({ page }) => {
   await switchTo(page, "Ravi");
   await expect(page.getByTestId("event-card")).toHaveCount(0);
   await tab(page, "Notifications").click();
-  await expect(page.getByTestId("notice").first()).toContainText("was not approved");
+  await expect(page.getByTestId("notice").filter({ hasText: "was not approved" }).first()).toBeVisible();
 });
 
 test("owner changes roles; nobody can change or remove the owner", async ({ page }) => {

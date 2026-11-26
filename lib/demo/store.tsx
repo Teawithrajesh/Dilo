@@ -136,6 +136,16 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const signIn = useCallback((id: PersonId) => {
     setMeId(id);
     try { sessionStorage.setItem(SESSION_KEY, id); } catch { /* ignore */ }
+    // A new member gets the founder's welcome letter (by email from Phase 2; in the app for now).
+    let welcomed = false;
+    try { welcomed = sessionStorage.getItem(`dilo-welcomed-${id}`) === "1"; sessionStorage.setItem(`dilo-welcomed-${id}`, "1"); } catch { /* ignore */ }
+    if (!welcomed) {
+      setNotices((n) =>
+        n.some((x) => x.personId === id && x.href === "/letter/")
+          ? n
+          : [{ id: `welcome-${id}`, personId: id, text: "📩 A welcome letter from Raj, DILO's founder. Tap to read.", when: "Just now", read: false, href: "/letter/" }, ...n],
+      );
+    }
   }, []);
 
   const signOut = useCallback(() => {

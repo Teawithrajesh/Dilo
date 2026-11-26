@@ -1,0 +1,25 @@
+Subject: Welcome to DILO, {{first_name}}
+
+Hi {{first_name}},
+
+Thank you for joining DILO. I'm Raj, and I started DILO for a simple reason.
+
+Think about the last wedding or birthday in your family. Everyone came with love, and everyone brought something. A dinner set. Another wall clock. Three of the same sarees. A few envelopes. The person whose day it was felt grateful, but a lot of those gifts went into a cupboard and stayed there.
+
+Now imagine if all that love had gone into one thing they really wanted. The camera your nephew has been saving for. The trip your parents never got to take. A new pair of glasses for Dadi, and a lunch with the whole family around her.
+
+That's what DILO is for. When someone you love has a special day, the family can see their dream, add to it together, and watch it come true. Nobody has to give a lot. A little from many people adds up to something that actually matters to them.
+
+A few things you should know:
+
+- Your community is private. Only people you approve can get in.
+- DILO never touches your money. You give the way you always do, cash or UPI, and just note it here so everyone can see the dream getting closer.
+- If you'd rather give quietly, you can. Only the organiser will see your name, so they can say thank you.
+
+Here's one small thing you can do today. Think of the next birthday, engagement, wedding or anniversary in your family, and ask that person one question: "What would truly make you happy this year?" Then put that dream on DILO and invite the family.
+
+I'd love to hear how it goes. Just reply to this email. It comes straight to me.
+
+With warmth,
+Raj
+Founder, DILO

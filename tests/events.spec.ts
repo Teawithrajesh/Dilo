@@ -103,7 +103,7 @@ test("anonymous: only the contributor and the organiser see the name; organiser 
 
   await switchFromEvent(page, "Sharma Family", "Neha");
   await tab(page, "Notifications").click();
-  await expect(page.getByTestId("notice").first()).toContainText("Priya confirmed your contribution to Anjali's Wedding");
+  await expect(page.getByTestId("notice").filter({ hasText: "Priya confirmed your contribution to Anjali's Wedding" }).first()).toBeVisible();
 });
 
 test("seeded anonymous record: hidden from members, visible to the organiser", async ({ page }) => {

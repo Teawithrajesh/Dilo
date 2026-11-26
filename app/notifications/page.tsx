@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
 import { Icon } from "@/components/Icon";
 import { useDemo } from "@/lib/demo/store";
@@ -23,10 +24,17 @@ export default function Notifications() {
               <Icon name="bell" className="h-5 w-5" />
               {!n.read && <><span aria-hidden className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-pink" /><span className="sr-only">Unread:</span></>}
             </span>
+            {n.href ? (
+              <Link href={n.href} className="flex min-h-11 flex-1 flex-col justify-center">
+                <span className={`block text-small underline-offset-4 hover:underline ${n.read ? "text-white/70" : "font-semibold"}`}>{n.text}</span>
+                <span className="text-tiny text-white/60">{n.when}</span>
+              </Link>
+            ) : (
             <span className="flex-1">
               <span className={`block text-small ${n.read ? "text-white/70" : "font-semibold"}`}>{n.text}</span>
               <span className="text-tiny text-white/60">{n.when}</span>
             </span>
+            )}
           </li>
         ))}
       </ul>

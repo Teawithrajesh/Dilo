@@ -39,7 +39,7 @@ export type DemoEvent = {
 export type Invite = { communityId: string; personId: PersonId; from: PersonId };
 /** A shareable invite link. Real app: random 128-bit token, stored hashed. */
 export type InviteLink = { code: string; communityId: string; createdBy: PersonId; expiresAt: number; revoked: boolean; maxUses: number; uses: number };
-export type Notice = { id: string; personId: PersonId; text: string; when: string; read: boolean };
+export type Notice = { id: string; personId: PersonId; text: string; when: string; read: boolean; href?: string };
 
 export const people: Person[] = [
   { id: "priya", name: "Priya Sharma", short: "Priya", label: "Owner", blurb: "Created Sharma Family. Can approve, remove and manage everyone.", gradient: "from-pink to-orange" },

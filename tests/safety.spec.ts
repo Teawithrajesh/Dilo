@@ -101,7 +101,7 @@ test("report a record → moderator removes it → reporter is told", async ({ p
 
   await switchTo(page, "Neha");
   await tab(page, "Notifications").click();
-  await expect(page.getByTestId("notice").first()).toContainText("The content was removed");
+  await expect(page.getByTestId("notice").filter({ hasText: "The content was removed" }).first()).toBeVisible();
   await tab(page, "Home").click();
   await page.getByTestId("event-card").filter({ hasText: "Anjali's Wedding" }).click();
   await expect(page.getByTestId("contribution").filter({ hasText: "Vikram Chacha" })).toHaveCount(0);
