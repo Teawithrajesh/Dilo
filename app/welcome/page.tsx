@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Glows } from "@/components/landing/Glows";
 import { GhostButton, PrimaryButton } from "@/components/landing/Buttons";
 import { Icon, type IconName } from "@/components/Icon";
-import { CelebrationIcon } from "@/components/celebrate/Decor";
+import { CelebrationIcon } from "@/components/celebrate/CelebrationIcon";
 import { celebrations } from "@/lib/celebrations";
 
 export const metadata = { title: "DILO · Together, We Make Dreams Come True" };

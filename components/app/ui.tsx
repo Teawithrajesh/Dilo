@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { DemoEvent } from "@/lib/demo/data";
 import { getCelebration } from "@/lib/celebrations";
-import { CelebrationIcon } from "@/components/celebrate/Decor";
+import { CelebrationIcon } from "@/components/celebrate/CelebrationIcon";
 
 export const inr = (n: number) => "₹" + n.toLocaleString("en-IN");
 export const niceDate = (iso: string) =>

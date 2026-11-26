@@ -35,3 +35,18 @@ Founder feedback: "koi bhi event khul nahi raha" — event cards were not tappab
 |---|---|
 | Build | Pass (20 pages) |
 | `npm test` (phone + desktop) | **72/72 pass** (adds: event card opens, every card opens and Back returns, Ravi can't open a private event) |
+
+## Revision 2 (26 Nov 2026): rich, premium theme pages
+Founder feedback: theme pages should look like the world's best web apps — decent and rich.
+- Cartoon balloons/confetti replaced by a quiet luxury style (`components/celebrate/Theme.tsx`): per-theme base colour, soft aurora light, vignette, film grain, and **fine gold line-art** behind the title (birthday sparkle constellation, engagement interlocked rings, wedding mandala, anniversary intertwined hearts).
+- **Cormorant Garamond** serif (self-hosted, @fontsource) for titles, taglines, the dream quote and amounts. Gold small-caps eyebrows and line-diamond dividers.
+- **Keepsakes**: photo frame (birthday circle, engagement/anniversary oval, **wedding arch / jharokha**) and an ivory **invitation card** ("You are invited / Your invitation"), each with a double gold hairline, slight tilt and deep shadow.
+- Event page: gold-lined **progress ring**, frosted panels, dream wish as a serif quote.
+- Fix: base CSS moved into `@layer base` so utility classes (like `font-serif`) can override heading fonts.
+- Old cartoon decoration code removed; tile icons kept in `CelebrationIcon.tsx`.
+
+| Check | Result |
+|---|---|
+| Build | Pass |
+| `npm test` (phone + desktop) | **72/72 pass** |
+| Contrast of new theme text (gold on theme base 11.6–13.1:1; ivory card text 5.8–10.3:1) | Pass (AA) — one card label darkened from 4.38:1 to 5.76:1 |

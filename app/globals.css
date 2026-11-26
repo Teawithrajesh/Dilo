@@ -15,6 +15,8 @@
 
   --font-sans: "Inter Variable", "Noto Sans", "Noto Sans Devanagari", system-ui, sans-serif;
   --font-display: "Plus Jakarta Sans Variable", "Inter Variable", "Noto Sans", system-ui, sans-serif;
+  /* Elegant serif for celebration titles and quotes only */
+  --font-serif: "Cormorant Garamond", "Noto Serif", Georgia, serif;
 
   /* Type scale: 32 / 24 / 20 / 16 / 14 / 12 px */
   --text-display: 2rem;
@@ -25,14 +27,17 @@
   --text-tiny: 0.75rem;
 }
 
-body {
-  background: var(--color-mist);
-  color: var(--color-navy);
-  font-family: var(--font-sans);
-}
+/* Base styles live in the base layer so utility classes (e.g. font-serif) can override them. */
+@layer base {
+  body {
+    background: var(--color-mist);
+    color: var(--color-navy);
+    font-family: var(--font-sans);
+  }
 
-h1, h2, h3 {
-  font-family: var(--font-display);
+  h1, h2, h3 {
+    font-family: var(--font-display);
+  }
 }
 
 /* Splash: the O is a raised key. A darker "side" under it makes it stand up from the page. */

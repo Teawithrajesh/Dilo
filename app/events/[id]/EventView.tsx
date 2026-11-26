@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { CelebrationIcon, Decor } from "@/components/celebrate/Decor";
-import { FramedUpload } from "@/components/celebrate/CelebrationForm";
+import { Keepsakes } from "@/components/celebrate/CelebrationForm";
+import { Divider, Eyebrow, Panel, ThemeBackdrop } from "@/components/celebrate/Theme";
 import { inr, niceDate } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
 import { getCelebration } from "@/lib/celebrations";
@@ -41,59 +41,77 @@ export function EventView({ id }: { id: string }) {
   const days = Math.ceil((new Date(e.date + "T00:00:00").getTime() - Date.now()) / 86_400_000);
 
   return (
-    <main className={`relative min-h-[calc(100dvh-2rem)] overflow-hidden bg-gradient-to-b ${c.bg} px-4 pb-20 text-white`}>
-      <Decor slug={c.slug} />
+    <main className="relative min-h-[calc(100dvh-2rem)] overflow-hidden px-4 pb-24 text-white">
+      <ThemeBackdrop c={c} />
       <div className="relative mx-auto max-w-3xl">
         <div className="flex h-16 items-center">
           <button
             type="button"
             onClick={() => (window.history.length > 1 ? router.back() : router.push("/home/"))}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-navy/40 px-4 text-small font-semibold backdrop-blur transition hover:bg-navy/60"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-black/20 px-4 text-small font-semibold backdrop-blur-md transition hover:bg-black/30"
           >
             <Icon name="arrow" className="h-4 w-4 rotate-180" />
             Back
           </button>
         </div>
 
-        <header className="mt-16 text-center">
-          <span className={`mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-gradient-to-br ${c.accent} text-navy shadow-lg`}>
-            <CelebrationIcon slug={c.slug} />
-          </span>
-          <p className="mt-6 text-tiny font-semibold uppercase tracking-[0.2em] text-white/70">{c.title} · Sample</p>
-          <h1 className="mt-2 text-balance text-[2rem] font-extrabold leading-tight">{e.title}</h1>
-          <p className="mt-2 text-white/80">
+        <header className="mt-20 text-center">
+          <Eyebrow gold={c.gold}>{c.title} · Sample</Eyebrow>
+          <h1 className="mt-5 text-balance font-serif text-[2.9rem] font-semibold leading-[1] tracking-tight sm:text-[4rem]">{e.title}</h1>
+          <p className="mt-5 font-serif text-[1.3rem] italic text-white/80">
             {niceDate(e.date)} · {community.name}
-            {days > 0 && <span className="block text-small text-white/70">{days} days to go</span>}
           </p>
+          {days > 0 && (
+            <p className="mt-2 text-tiny font-semibold uppercase tracking-[0.3em]" style={{ color: c.gold }}>{days} days to go</p>
+          )}
         </header>
 
-        <section className="mt-8 rounded-3xl border border-white/10 bg-navy/50 p-5 backdrop-blur" aria-label="Progress">
-          <div className="flex items-end justify-between">
-            <p className="font-display text-display font-extrabold">{pct}%</p>
-            <p className="text-small text-white/80">{inr(e.recorded)} recorded of {inr(e.goal)}</p>
+        <Panel gold={c.gold} className="mt-12">
+          <div className="flex items-center gap-6">
+            <ProgressRing pct={pct} gold={c.gold} accent={c.glows} />
+            <div className="min-w-0">
+              <p className="text-tiny font-semibold uppercase tracking-[0.3em]" style={{ color: c.gold }}>Recorded so far</p>
+              <p className="mt-1 font-serif text-[2rem] font-semibold leading-none">{inr(e.recorded)}</p>
+              <p className="mt-1 text-small text-white/70">of {inr(e.goal)} goal</p>
+            </div>
           </div>
-          <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-label="Recorded towards goal" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-            <div className={`h-full rounded-full bg-gradient-to-r ${c.accent}`} style={{ width: `${pct}%` }} />
-          </div>
-          <p className="mt-2 text-tiny text-white/70">Self-reported by members. DILO never handles money.</p>
-        </section>
+          <p className="mt-5 border-t pt-4 text-tiny text-white/60" style={{ borderColor: `${c.gold}26` }}>Self-reported by members. DILO never handles money.</p>
+        </Panel>
 
-        <div className="mt-10 grid gap-10 sm:grid-cols-2">
-          <FramedUpload label={c.photoLabel} hint={c.photoHint} shape="photo" accent={c.accent} testId="photo" />
-          <FramedUpload label="Invitation card" hint="Upload your invitation card" shape="card" accent={c.accent} testId="invite" />
-        </div>
+        <Divider gold={c.gold} />
+        <Keepsakes c={c} />
+        <Divider gold={c.gold} />
 
-        <section className="mt-10 rounded-3xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur">
-          <h2 className="font-display text-body font-bold">Dream wish</h2>
-          <p className="mt-2 text-white/85" data-testid="dream">{e.dream}</p>
-          <h2 className="mt-6 font-display text-body font-bold">Estimated budget</h2>
-          <p className="mt-1 font-display text-title font-extrabold">{inr(e.goal)}</p>
-        </section>
+        <Panel gold={c.gold}>
+          <h2 className="text-tiny font-semibold uppercase tracking-[0.3em]" style={{ color: c.gold }}>Dream wish</h2>
+          <p className="mt-3 font-serif text-[1.6rem] italic leading-snug text-white/95" data-testid="dream">&ldquo;{e.dream}&rdquo;</p>
+          <h2 className="mt-8 text-tiny font-semibold uppercase tracking-[0.3em]" style={{ color: c.gold }}>Estimated budget</h2>
+          <p className="mt-2 font-serif text-[2.4rem] font-semibold leading-none">{inr(e.goal)}</p>
+        </Panel>
 
-        <p className="mt-8 rounded-2xl border border-dashed border-white/20 p-4 text-center text-small text-white/75">
+        <p className="mt-8 text-center text-small text-white/70">
           Wishlist ({e.wishes} wishes) and recording contributions open in the next steps.
         </p>
       </div>
     </main>
+  );
+}
+
+function ProgressRing({ pct, gold, accent }: { pct: number; gold: string; accent: [string, string, string] }) {
+  const r = 44, C = 2 * Math.PI * r;
+  return (
+    <div className="relative h-28 w-28 shrink-0" role="progressbar" aria-label="Recorded towards goal" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+      <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
+        <defs>
+          <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor={accent[0]} />
+            <stop offset="1" stopColor={accent[1]} />
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r={r} fill="none" stroke={`${gold}26`} strokeWidth="5" />
+        <circle cx="50" cy="50" r={r} fill="none" stroke="url(#ring)" strokeWidth="5" strokeLinecap="round" strokeDasharray={`${(pct / 100) * C} ${C}`} />
+      </svg>
+      <span className="absolute inset-0 grid place-items-center font-serif text-[1.9rem] font-semibold">{pct}%</span>
+    </div>
   );
 }
