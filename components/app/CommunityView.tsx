@@ -24,7 +24,7 @@ export function PrivateWall({ title = "This community is private" }: { title?: s
 }
 
 export function CommunityView({ id }: { id: string }) {
-  const { community, roleIn, memberCount, eventsIn, requestsFor, members, setCommunityImages } = useDemo();
+  const { community, roleIn, memberCount, eventsIn, requestsFor, members, setCommunityImages, feed } = useDemo();
   const c = community(id);
   const role = roleIn(id);
 
@@ -128,6 +128,26 @@ export function CommunityView({ id }: { id: string }) {
       ) : (
         <div className="space-y-3">{events.map((e) => <EventCard key={e.id} e={e} />)}</div>
       )}
+
+      <SectionTitle>Activity</SectionTitle>
+      <ul className="space-y-2" data-testid="feed">
+        {feed(id).length === 0 && <li className="text-small text-white/70">Nothing yet.</li>}
+        {feed(id).slice(0, 8).map((a) => (
+          <li key={a.id} data-testid="feed-item">
+            {a.eventId ? (
+              <Link href={`/event/?id=${a.eventId}`} className="flex min-h-11 items-start gap-3 rounded-2xl border border-white/5 bg-white/[0.03] p-3 transition hover:bg-white/[0.06]">
+                <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-pink to-orange" aria-hidden />
+                <span className="text-small"><span className="block">{a.text}</span><span className="text-tiny text-white/60">{a.when}</span></span>
+              </Link>
+            ) : (
+              <div className="flex items-start gap-3 rounded-2xl border border-white/5 bg-white/[0.03] p-3">
+                <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-white/40" aria-hidden />
+                <span className="text-small"><span className="block">{a.text}</span><span className="text-tiny text-white/60">{a.when}</span></span>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
 
       <SectionTitle aside={<Link href={`/community/members/?id=${id}`} className="inline-flex min-h-11 items-center text-small font-semibold text-orange">See all</Link>}>
         Members

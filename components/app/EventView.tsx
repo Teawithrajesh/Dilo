@@ -9,6 +9,8 @@ import { inr, niceDate } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
 import { getCelebration } from "@/lib/celebrations";
 import { useDemo } from "@/lib/demo/store";
+import { Wishlist } from "@/components/app/event/Wishlist";
+import { Contributions } from "@/components/app/event/Contributions";
 
 /** Event page in its celebration theme. Wishlist and contributions arrive in Step 6. */
 export function EventView({ id }: { id: string }) {
@@ -64,6 +66,14 @@ export function EventView({ id }: { id: string }) {
           )}
         </header>
 
+        {e.recorded >= e.goal && (
+          <div role="status" className="relative mt-10 overflow-hidden rounded-[1.75rem] border p-6 text-center" style={{ borderColor: `${c.gold}66`, background: `linear-gradient(135deg, ${c.glows[0]}33, ${c.glows[1]}33)` }} data-testid="celebration-banner">
+            <p className="text-[2.2rem]" aria-hidden>🎉</p>
+            <p className="mt-1 font-serif text-[2rem] font-semibold italic leading-tight">The dream came true!</p>
+            <p className="mt-2 text-small text-white/80">The goal is reached. Thank you to everyone who made it happen.</p>
+          </div>
+        )}
+
         <Panel gold={c.gold} className="mt-12">
           <div className="flex items-center gap-6">
             <ProgressRing pct={pct} gold={c.gold} accent={c.glows} />
@@ -93,9 +103,11 @@ export function EventView({ id }: { id: string }) {
           <p className="mt-2 font-serif text-[2.4rem] font-semibold leading-none">{inr(e.goal)}</p>
         </Panel>
 
-        <p className="mt-8 text-center text-small text-white/70">
-          Wishlist and recording contributions open in the next step.
-        </p>
+        <Divider gold={c.gold} />
+        <Wishlist eventId={e.id} c={c} />
+        <div className="mt-8">
+          <Contributions eventId={e.id} c={c} />
+        </div>
       </div>
     </main>
   );
