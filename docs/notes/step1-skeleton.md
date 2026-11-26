@@ -30,4 +30,6 @@ Android Chrome greyed out install. Added `public/sw.js` (shows `offline.html` wh
 | Offline reload shows "You are offline" with DEMO DATA banner | Pass |
 | Console errors | None |
 
-Pending: owner re-checks install on the phone after `git pull`.
+Owner re-check after `git pull`: **installed successfully** (owner's message, 26 Nov 2026). Home-screen icon screenshot was not received.
+
+**Step 1 complete.**
