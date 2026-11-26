@@ -50,3 +50,5 @@ Founder feedback: theme pages should look like the world's best web apps — dec
 | Build | Pass |
 | `npm test` (phone + desktop) | **72/72 pass** |
 | Contrast of new theme text (gold on theme base 11.6–13.1:1; ivory card text 5.8–10.3:1) | Pass (AA) — one card label darkened from 4.38:1 to 5.76:1 |
+
+**Step 4 complete.** Approved by the founder on 26 Nov 2026 ("Step 4 OK").
