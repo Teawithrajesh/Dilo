@@ -7,5 +7,7 @@
 | Package installs in Claude's workspace | OK (npm reachable) | 26 Nov 2026 |
 | Termux `git --version` | 2.54.0 | 26 Nov 2026 |
 | Termux `uname -m` | aarch64 | 26 Nov 2026 |
-| Termux `node -v` | **Pending**: Node not installed yet (`pkg install -y nodejs-lts`) | |
+| Termux `node -v` | v24.17.0 (npm 11.17.0), via `pkg install -y nodejs-lts` | 26 Nov 2026 |
 | Logo reference image | Saved in `docs/brand/` | 26 Nov 2026 |
+
+**Step 0 complete.** Phone: Node 24 LTS on aarch64. Claude's build workspace: Node 22. The app will target Node 22+.
