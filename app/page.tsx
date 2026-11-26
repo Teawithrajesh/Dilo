@@ -1,5 +1,6 @@
 import { Glows } from "@/components/landing/Glows";
 import { OButton } from "@/components/OButton";
+import { AnimatedLogo } from "@/components/AnimatedLogo";
 
 // Splash. The "O" in DILO is a raised key: press it to open the app (the founder's choice).
 // O position inside the logo image (percent of width/height), measured from the image.
@@ -11,9 +12,8 @@ export default function Splash() {
       <Glows />
       <div className="relative">
         <div className="relative mx-auto w-52 sm:w-60">
-          {/* Logo without its O; the O is the key on top. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/dilo-logo-dil.png" alt="DILO" width={666} height={705} className="h-auto w-full" />
+          {/* Logo without its O, assembling itself once; the O is the key on top. */}
+          <AnimatedLogo />
           <OButton
             href="/welcome/"
             style={{ left: `${O_BOX.left}%`, top: `${O_BOX.top}%`, width: `${O_BOX.width}%`, height: `${O_BOX.height}%` }}
