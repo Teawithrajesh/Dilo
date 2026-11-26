@@ -4,7 +4,7 @@
 // except which demo person you picked (kept for this browser tab only).
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import * as seed from "./data";
-import type { Activity, Community, CommunityType, Contribution, DemoEvent, InviteLink, Membership, Notice, Person, PersonId, Priority, Role, Wish } from "./data";
+import type { Activity, Community, CommunityType, Contribution, DemoEvent, InviteLink, Membership, ModerationAction, Notice, Person, PersonId, Priority, Report, ReportReason, ReportTarget, Role, Wish } from "./data";
 import type { CelebrationSlug } from "@/lib/celebrations";
 import { can } from "@/lib/permissions";
 
@@ -66,6 +66,28 @@ type DemoState = {
   confirmContribution: (contributionId: string) => Result;
   removeContribution: (contributionId: string) => Result;
   feed: (communityId: string) => Activity[];
+  // Step 7: profile, privacy, safety, admin
+  person: (id: PersonId) => Person;
+  updateProfile: (p: { name?: string; bio?: string; photo?: string }) => Result;
+  anonymousByDefault: boolean;
+  setAnonymousByDefault: (on: boolean) => void;
+  exportMyData: () => object;
+  deleteAccount: () => Result;
+  blocked: PersonId[];
+  block: (id: PersonId) => void;
+  unblock: (id: PersonId) => void;
+  report: (r: { communityId: string; target: ReportTarget; summary: string; reason: ReportReason; note?: string }) => Result;
+  reportsFor: (communityId: string) => Report[];
+  moderatedCommunities: Community[];
+  moderate: (reportId: string, action: "remove" | "dismiss") => Result;
+  isSuspended: (communityId: string) => boolean;
+  // platform admin only
+  isPlatformAdmin: boolean;
+  adminStats: { people: number; communities: number; celebrations: number; records: number; openReports: number };
+  allReports: (Report & { communityName: string })[];
+  allCommunities: (Community & { members: number; suspended: boolean })[];
+  setSuspended: (communityId: string, on: boolean) => Result;
+  actions: ModerationAction[];
 };
 
 const Ctx = createContext<DemoState | null>(null);
@@ -94,6 +116,12 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [wishes, setWishes] = useState<Wish[]>(seed.wishes);
   const [contribs, setContribs] = useState<Contribution[]>(seed.contributions);
   const [activity, setActivity] = useState<Activity[]>(seed.activity);
+  const [profiles, setProfiles] = useState<Partial<Record<PersonId, { name?: string; bio?: string; photo?: string }>>>({});
+  const [anonDefault, setAnonDefault] = useState<Partial<Record<PersonId, boolean>>>({});
+  const [blocks, setBlocks] = useState<{ by: PersonId; who: PersonId }[]>([]);
+  const [reports, setReports] = useState<Report[]>(seed.reports);
+  const [suspended, setSuspendedList] = useState<string[]>([]);
+  const [actions, setActions] = useState<ModerationAction[]>([]);
 
   useEffect(() => {
     try {
@@ -116,8 +144,13 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo<DemoState>(() => {
-    const me = seed.people.find((p) => p.id === meId) ?? null;
-    const person = (id: PersonId) => seed.people.find((p) => p.id === id)!;
+    const person = (id: PersonId): Person => {
+      const base = seed.people.find((p) => p.id === id)!;
+      const o = profiles[id] ?? {};
+      const name = o.name?.trim() || base.name;
+      return { ...base, ...o, name, short: o.name?.trim() ? name.split(" ")[0] : base.short };
+    };
+    const me = meId ? person(meId) : null;
     const community = (id: string) => communities.find((c) => c.id === id);
     const roleOf = (cid: string, pid: PersonId) => memberships.find((m) => m.communityId === cid && m.personId === pid)?.role ?? null;
     const roleIn = (cid: string) => (meId ? roleOf(cid, meId) : null);
@@ -126,7 +159,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     const myNotices = notices.filter((n) => n.personId === meId);
     // "Recorded" always comes from the contribution records (self-reported + confirmed).
     const recordedFor = (eid: string) => contribs.filter((c) => c.eventId === eid).reduce((t, c) => t + c.amount, 0);
-    const liveEvents = events.map((e) => ({ ...e, recorded: recordedFor(e.id) }));
+    const liveEvents = events.filter((e) => !e.removed).map((e) => ({ ...e, recorded: recordedFor(e.id) }));
     const findEvent = (eid: string) => liveEvents.find((e) => e.id === eid);
     const isOrganiser = (eid: string) => {
       const e = findEvent(eid);
@@ -355,7 +388,8 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
             const realName = c.personId === "sample" ? c.sampleName ?? "Sample guest" : person(c.personId).name;
             // Anonymous: only the contributor and the organiser see the name.
             const shownName = c.anonymous && !isMine && !org ? "Anonymous" : realName;
-            return { ...c, shownName, isMine };
+            const isBlocked = c.personId !== "sample" && blocks.some((b) => b.by === meId && b.who === c.personId);
+            return { ...c, shownName, isMine, message: isBlocked ? undefined : c.message };
           })
           .reverse()
           .filter(() => !!e);
@@ -397,8 +431,98 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       },
 
       feed: (cid) => activity.filter((a) => a.communityId === cid),
+
+      person,
+      updateProfile: ({ name, bio, photo }) => {
+        if (!meId) return { ok: false, error: "Not signed in." };
+        if (name !== undefined && !name.trim()) return { ok: false, error: "Please enter your name." };
+        setProfiles((p) => ({ ...p, [meId]: { ...p[meId], ...(name !== undefined ? { name: name.trim().slice(0, 40) } : {}), ...(bio !== undefined ? { bio: bio.trim().slice(0, 140) } : {}), ...(photo ? { photo } : {}) } }));
+        return { ok: true };
+      },
+      anonymousByDefault: !!(meId && anonDefault[meId]),
+      setAnonymousByDefault: (on) => { if (meId) setAnonDefault((a) => ({ ...a, [meId]: on })); },
+
+      exportMyData: () => {
+        if (!meId) return {};
+        const mine = (pid: PersonId | "sample") => pid === meId;
+        return {
+          exportedAt: new Date().toISOString(),
+          note: "DILO demo data export. In the real app this file lists everything DILO stores about you.",
+          profile: { name: person(meId).name, bio: person(meId).bio ?? "", hasPhoto: !!person(meId).photo },
+          settings: { anonymousByDefault: !!anonDefault[meId] },
+          communities: memberships.filter((m) => m.personId === meId).map((m) => ({ community: community(m.communityId)?.name, role: m.role })),
+          contributions: contribs.filter((c) => mine(c.personId)).map((c) => ({ event: findEvent(c.eventId)?.title, amount: c.amount, anonymous: c.anonymous, status: c.status, message: c.message ?? "" })),
+          notifications: notices.filter((n) => n.personId === meId).map((n) => n.text),
+          blocked: blocks.filter((b) => b.by === meId).map((b) => person(b.who).name),
+        };
+      },
+
+      deleteAccount: () => {
+        if (!meId) return { ok: false, error: "Not signed in." };
+        const lastOwnerOf = communities.filter((c) => roleOf(c.id, meId) === "owner" && ownersOf(c.id).length <= 1);
+        if (lastOwnerOf.length) return { ok: false, error: `You're the only owner of ${lastOwnerOf.map((c) => c.name).join(", ")}. Make someone else an owner first.` };
+        setMemberships((m) => m.filter((x) => x.personId !== meId));
+        return { ok: true };
+      },
+
+      blocked: blocks.filter((b) => b.by === meId).map((b) => b.who),
+      block: (id) => { if (meId && id !== meId) setBlocks((b) => (b.some((x) => x.by === meId && x.who === id) ? b : [...b, { by: meId, who: id }])); },
+      unblock: (id) => setBlocks((b) => b.filter((x) => !(x.by === meId && x.who === id))),
+
+      report: ({ communityId, target, summary, reason, note }) => {
+        if (!meId || roleIn(communityId) === null) return { ok: false, error: "Only members can report." };
+        const r: Report = { id: `r-${Date.now()}`, communityId, reporterId: meId, target, summary, reason, note: note?.trim() || undefined, status: "open", when: "Just now" };
+        setReports((list) => [r, ...list]);
+        notify(approversOf(communityId).filter((p) => p !== meId), `New report in ${community(communityId)?.name}: ${summary}. Please review.`);
+        return { ok: true };
+      },
+      reportsFor: (cid) => (can.approveMembers(roleIn(cid)) ? reports.filter((r) => r.communityId === cid) : []),
+      moderatedCommunities: communities.filter((c) => can.approveMembers(roleIn(c.id))),
+
+      moderate: (reportId, action) => {
+        const r = reports.find((x) => x.id === reportId);
+        if (!r || !meId) return { ok: false, error: "Report not found." };
+        if (!can.approveMembers(roleIn(r.communityId))) return { ok: false, error: "Only owners, admins and moderators can act on reports." };
+        if (action === "remove") {
+          const t = r.target;
+          if (t.type === "contribution") setContribs((list) => list.filter((c) => c.id !== t.contributionId));
+          else if (t.type === "event") setEvents((list) => list.map((e) => (e.id === t.eventId ? { ...e, removed: true } : e)));
+          else {
+            const target = roleOf(r.communityId, t.personId);
+            if (target && !can.remove(roleIn(r.communityId), target)) return { ok: false, error: "You can't remove this person (their role is equal to or higher than yours)." };
+            setMemberships((m) => m.filter((x) => !(x.communityId === r.communityId && x.personId === t.personId)));
+          }
+        }
+        setReports((list) => list.map((x) => (x.id === reportId ? { ...x, status: action === "remove" ? "removed" : "dismissed" } : x)));
+        setActions((a) => [{ id: `m-${Date.now()}`, reportId, byId: meId, action: action === "remove" ? "removed" : "dismissed", when: "Just now" }, ...a]);
+        notify([r.reporterId], action === "remove" ? "Thanks for your report. The content was removed." : "Thanks for your report. A moderator reviewed it and left it up.");
+        return { ok: true };
+      },
+      isSuspended: (cid) => suspended.includes(cid),
+
+      isPlatformAdmin: !!me?.platformAdmin,
+      adminStats: {
+        people: seed.people.filter((p) => !p.platformAdmin).length + Object.values(seed.extraMemberCounts).reduce((a, b) => a + b, 0),
+        communities: communities.length,
+        celebrations: liveEvents.length,
+        records: contribs.length,
+        openReports: reports.filter((r) => r.status === "open").length,
+      },
+      // The admin sees what was reported (the summary), never the community's private content.
+      allReports: me?.platformAdmin ? reports.map((r) => ({ ...r, communityName: community(r.communityId)?.name ?? "" })) : [],
+      allCommunities: me?.platformAdmin
+        ? communities.map((c) => ({ ...c, members: memberships.filter((m) => m.communityId === c.id).length + (seed.extraMemberCounts[c.id] ?? 0), suspended: suspended.includes(c.id) }))
+        : [],
+      setSuspended: (cid, on) => {
+        if (!me?.platformAdmin) return { ok: false, error: "Only the platform admin can do this." };
+        setSuspendedList((l) => (on ? [...new Set([...l, cid])] : l.filter((x) => x !== cid)));
+        setActions((a) => [{ id: `m-${Date.now()}`, reportId: "", byId: meId!, action: on ? "suspended" : "restored", when: "Just now" }, ...a]);
+        notify(memberships.filter((m) => m.communityId === cid).map((m) => m.personId), on ? `${community(cid)?.name} was suspended by DILO while we review a report.` : `${community(cid)?.name} is active again.`);
+        return { ok: true };
+      },
+      actions,
     };
-  }, [ready, meId, communities, memberships, links, requests, notices, events, wishes, contribs, activity, signIn, signOut]);
+  }, [ready, meId, communities, memberships, links, requests, notices, events, wishes, contribs, activity, profiles, anonDefault, blocks, reports, suspended, actions, signIn, signOut]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -1,10 +1,10 @@
 // Phase 1 demo data. Every name is invented and labelled "Sample" in the UI.
 import type { CelebrationSlug } from "@/lib/celebrations";
 
-export type PersonId = "priya" | "amit" | "neha" | "ravi";
+export type PersonId = "priya" | "amit" | "neha" | "ravi" | "admin";
 export type Role = "owner" | "admin" | "moderator" | "member";
 
-export type Person = { id: PersonId; name: string; short: string; label: string; blurb: string; gradient: string };
+export type Person = { id: PersonId; name: string; short: string; label: string; blurb: string; gradient: string; photo?: string; bio?: string; platformAdmin?: boolean };
 export type CommunityType = "Family" | "Friends" | "Community";
 export type Community = {
   id: string;
@@ -30,6 +30,7 @@ export type DemoEvent = {
   createdBy?: PersonId; // the organiser
   sample?: boolean;
   celebrated?: boolean; // goal reached and celebrated
+  removed?: boolean; // taken down by a moderator
   /** Local preview links picked on this phone (never uploaded in the demo). */
   photo?: string;
   invitation?: string;
@@ -45,6 +46,7 @@ export const people: Person[] = [
   { id: "amit", name: "Amit Sharma", short: "Amit", label: "Moderator", blurb: "Helps Priya: approves new members and keeps things friendly.", gradient: "from-violet to-pink" },
   { id: "neha", name: "Neha Verma", short: "Neha", label: "Member", blurb: "Part of the family group. Can see events and add wishes.", gradient: "from-orange to-gold" },
   { id: "ravi", name: "Ravi Kumar", short: "Ravi", label: "Newcomer", blurb: "Has an invite to Sharma Family but isn't a member yet.", gradient: "from-[#2bb3a3] to-violet" },
+  { id: "admin", name: "DILO Admin", short: "Admin", label: "Platform admin", blurb: "The founder's view: totals, reports and suspensions. Cannot open private communities.", gradient: "from-gold to-orange", platformAdmin: true },
 ];
 
 export const communities: Community[] = [
@@ -133,4 +135,24 @@ export const activity: Activity[] = [
   { id: "a2", communityId: "sharma-family", text: "Amit recorded a contribution to Mummy & Papa's 25th Anniversary.", when: "6h ago", eventId: "parents-anniversary" },
   { id: "a3", communityId: "sharma-family", text: "Priya created Mummy & Papa's 25th Anniversary.", when: "Yesterday", eventId: "parents-anniversary" },
   { id: "a4", communityId: "delhi-friends", text: "Neha created Aman & Pooja's Engagement.", when: "3 days ago", eventId: "aman-neha-engagement" },
+];
+
+export type ReportReason = "spam" | "abuse" | "fake" | "privacy" | "other";
+export type ReportTarget = { type: "member"; personId: PersonId } | { type: "event"; eventId: string } | { type: "contribution"; contributionId: string };
+export type Report = {
+  id: string;
+  communityId: string;
+  reporterId: PersonId;
+  target: ReportTarget;
+  /** Short description of what was reported, so moderators and the admin don't need to open private content. */
+  summary: string;
+  reason: ReportReason;
+  note?: string;
+  status: "open" | "removed" | "dismissed";
+  when: string;
+};
+export type ModerationAction = { id: string; reportId: string; byId: PersonId; action: "removed" | "dismissed" | "suspended" | "restored"; when: string };
+
+export const reports: Report[] = [
+  { id: "r1", communityId: "sharma-family", reporterId: "neha", target: { type: "contribution", contributionId: "c4" }, summary: "A contribution record on Anjali's Wedding (₹11,000)", reason: "fake", note: "I don't think this was given.", status: "open", when: "2h ago" },
 ];
