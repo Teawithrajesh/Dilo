@@ -37,9 +37,9 @@ export function OButton({ href, style }: { href: string; style: React.CSSPropert
       style={style}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/brand/dilo-o.png" alt="" width={184} height={178} className="o-key__face block h-full w-full" draggable={false} />
+      <img src="/brand/dilo-o.png" alt="" width={184} height={178} className="o-key__face logo-pop block h-full w-full" draggable={false} />
       {/* Glossy top light, clipped to the O's own shape */}
-      <span aria-hidden className="o-key__shine" />
+      <span aria-hidden className="o-key__shine logo-pop" />
     </Link>
   );
 }
