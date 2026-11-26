@@ -18,3 +18,6 @@ Founder asked how an animated logo on the first page would look; chose option A.
 |---|---|
 | Build | Pass |
 | `npm test` (phone + desktop) | **186/186 pass** (adds: all pieces load and the intro ends within 2 s, the O works immediately, reduced motion shows the full logo) |
+
+## Revision 1: slower
+Founder: "thoda dheema karo". Everything is about 1.5× slower; the intro now takes about **2.8 s** (infinity 0.15–1.55 s, people 1.17 / 1.32 s, star 1.58 s, "DIL" 1.72 s, O 2.02–2.77 s). The O still works at any time.

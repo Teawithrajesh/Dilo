@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("the splash logo pieces all load and finish in under 2 seconds", async ({ page }) => {
+test("the splash logo pieces all load and finish in under 3 seconds", async ({ page }) => {
   await page.goto("/");
   const imgs = page.locator('[role=img][aria-label="DILO"] img');
   await expect(imgs).toHaveCount(5);
@@ -11,7 +11,7 @@ test("the splash logo pieces all load and finish in under 2 seconds", async ({ p
       return Number(t.delay) + Number(t.duration);
     })),
   );
-  expect(longest).toBeLessThanOrEqual(2000);
+  expect(longest).toBeLessThanOrEqual(3000);
 });
 
 test("the O can be pressed straight away, even while the logo is still animating", async ({ page }) => {
