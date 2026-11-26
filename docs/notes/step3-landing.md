@@ -59,3 +59,5 @@ Founder feedback: people can't tell where to press; make the O look raised like 
 | `npm test` (phone + desktop) | **44/44 pass** (adds: press the O while it moves) |
 | Screenshot: O raised vs pressed | Checked |
 | Sound / vibration | Not testable by the robot; the owner checks on the phone |
+
+**Step 3 complete.** Approved by the founder on 26 Nov 2026 ("Step 3 OK").
