@@ -46,3 +46,16 @@ Founder feedback: keep the app-icon design as the only brand logo, don't make it
 | Logo loads, no failed requests, no console errors | Pass |
 | No horizontal or vertical scroll on the splash | Pass |
 | Chromium installability errors | None |
+
+## Revision 3 (26 Nov 2026): smooth infinity, open "O"
+Founder feedback: smooth the infinity; make the "O" in DILO slightly open (ring not closed).
+- Symbol edges: colour decontamination (edge pixels take colour from the solid interior, removes the light fringe), 6× upscale, smoothed anti-aliased alpha.
+- "O": a 24° gap cut at about 1 o'clock.
+- Logo and all app icons/favicons rebuilt from the same source; tagline now balanced (no lone "True.").
+
+| Re-check (Pixel 7 emulation) | Result |
+|---|---|
+| Build | Pass |
+| Logo loads, no failed requests, no console errors | Pass |
+| No scroll on the splash | Pass |
+| Chromium installability errors | None |
