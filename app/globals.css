@@ -34,3 +34,19 @@ body {
 h1, h2, h3 {
   font-family: var(--font-display);
 }
+
+/* Splash: a slow, soft glow around the O so people know it can be tapped. */
+.o-hotspot {
+  box-shadow: 0 0 0 0 rgba(253, 46, 122, 0);
+  animation: o-glow 2.8s ease-in-out infinite;
+}
+@keyframes o-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 154, 31, 0), inset 0 0 0 0 rgba(255, 154, 31, 0); }
+  50% { box-shadow: 0 0 16px 1px rgba(255, 154, 31, 0.3), inset 0 0 10px 0 rgba(255, 154, 31, 0.18); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .o-hotspot { animation: none; }
+}
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

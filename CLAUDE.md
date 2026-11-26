@@ -8,3 +8,5 @@
 - Keep the "DEMO DATA" banner on every in-app screen.
 - New phone scripts need owner approval before first run. Never touch the owner's other Termux projects.
 - Report test results honestly.
+- Brand: one logo only (`public/brand/dilo-logo.png`: symbol + "DIL" white + gradient "O"). On the splash, tapping the O opens `/welcome/` (founder's choice). Premium navy style; no amateur-looking cards or buttons.
+- Tests: `npm run preview:update && npm test` (Playwright, phone + desktop) and `npm run test:contrast`.

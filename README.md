@@ -18,6 +18,8 @@ Then open http://localhost:8080 in Chrome. Stop with Ctrl+C.
 npm install
 npm run build            # static export to out/
 npm run preview:update   # build and refresh preview/
+npm test                 # Playwright tests (phone + desktop) on preview/
+npm run test:contrast    # colour contrast check
 ```
 
 ## Docs
