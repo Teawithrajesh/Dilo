@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* DILO tokens — keep in sync with brand/tokens.json (checked by `npm run test:contrast`). */
+@theme {
+  --color-navy: #0a1440;
+  --color-pink: #fd216e;
+  --color-pink-deep: #d1004f;
+  --color-violet: #3a1ecf;
+  --color-orange: #fe8f02;
+  --color-gold: #ffb000;
+  --color-mist: #f7f5fb;
+  --color-slate: #4b5275;
+  --color-trust: #157a52;
+  --color-caution: #8a5a12;
+
+  --font-sans: "Inter Variable", "Noto Sans", "Noto Sans Devanagari", system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans Variable", "Inter Variable", "Noto Sans", system-ui, sans-serif;
+
+  /* Type scale: 32 / 24 / 20 / 16 / 14 / 12 px */
+  --text-display: 2rem;
+  --text-title: 1.5rem;
+  --text-heading: 1.25rem;
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-tiny: 0.75rem;
+}
+
+body {
+  background: var(--color-mist);
+  color: var(--color-navy);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
