@@ -159,3 +159,45 @@ test("new screens: banner, no side-scroll, 44 px tap targets", async ({ page }) 
     expect(small, path).toEqual([]);
   }
 });
+
+const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==", "base64");
+const png = (name: string) => ({ name, mimeType: "image/png", buffer: PNG });
+
+test("owner adds a cover banner and a community photo", async ({ page }) => {
+  await signInAs(page, "Priya");
+  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await expect(page.getByTestId("cover-image")).toHaveCount(0);
+  await page.getByTestId("cover-input").setInputFiles(png("cover.png"));
+  await expect(page.getByTestId("cover-image")).toBeVisible();
+  await page.getByTestId("photo-input").setInputFiles(png("photo.png"));
+  await expect(page.getByTestId("community-photo").first()).toBeVisible();
+  // the new photo shows on the Communities list too
+  await tab(page, "Communities").click();
+  await expect(page.getByTestId("community-photo").first()).toBeVisible();
+});
+
+test("members can't change community photos; non-images are refused", async ({ page }) => {
+  await signInAs(page, "Neha");
+  await page.getByRole("link", { name: /Sharma Family/ }).first().click();
+  await expect(page.getByTestId("cover-input")).toHaveCount(0);
+  await expect(page.getByTestId("photo-input")).toHaveCount(0);
+  await tab(page, "Communities").click();
+  await page.getByRole("link", { name: "+ Create community" }).click();
+  await page.getByTestId("new-cover-input").setInputFiles({ name: "x.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF") });
+  await expect(page.getByRole("alert").filter({ hasText: "JPG, PNG or WebP" })).toBeVisible();
+});
+
+test("create a community with its own cover and photo", async ({ page }) => {
+  await signInAs(page, "Neha");
+  await tab(page, "Communities").click();
+  await page.getByRole("link", { name: "+ Create community" }).click();
+  await page.getByTestId("new-cover-input").setInputFiles(png("c.png"));
+  await page.getByTestId("new-photo-input").setInputFiles(png("p.png"));
+  await expect(page.getByTestId("cover-image")).toBeVisible();
+  await page.getByLabel("Community name").fill("Verma Cousins");
+  await page.getByRole("button", { name: "Create community" }).click();
+  await expect(page).toHaveURL(/\/community\/\?id=verma-cousins-/);
+  await expect(page.getByTestId("cover-image")).toBeVisible();
+  await expect(page.getByTestId("community-photo")).toBeVisible();
+  await expect(page.getByText("Change cover")).toBeVisible(); // owner can edit
+});

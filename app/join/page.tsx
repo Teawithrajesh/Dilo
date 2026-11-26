@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Glows } from "@/components/landing/Glows";
 import { QueryParam } from "@/components/app/QueryParam";
+import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
 import { Icon } from "@/components/Icon";
 import { useDemo } from "@/lib/demo/store";
 
@@ -33,8 +34,9 @@ function Join({ code }: { code: string }) {
         ) : (
           <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04]" data-testid="invite-preview">
             {/* Only the name and cover are shown before approval */}
-            <div className={`h-28 bg-gradient-to-br ${check.community.gradient} opacity-85`} />
-            <div className="p-6 text-center">
+            <Cover c={check.community} className="h-28" />
+            <div className="-mt-10 flex justify-center"><CommunityPhoto c={check.community} size="h-20 w-20 text-heading" ring /></div>
+            <div className="p-6 pt-3 text-center">
               <p className="text-small text-white/70">You&apos;re invited to</p>
               <h1 className="mt-1 font-display text-title font-extrabold">{check.community.name}</h1>
               <p className="mt-2 flex items-center justify-center gap-1 text-tiny text-white/60">

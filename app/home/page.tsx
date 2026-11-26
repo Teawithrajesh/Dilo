@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
+import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
 import { EventCard, SectionTitle } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
 import { useDemo } from "@/lib/demo/store";
@@ -19,7 +20,7 @@ export default function Home() {
           <SectionTitle>Pending invites</SectionTitle>
           {myInvites.map(({ community, from, requested }) => (
             <div key={community.id} className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04]" data-testid="invite-card">
-              <div className={`h-20 bg-gradient-to-br ${community.gradient} opacity-80`} />
+              <Cover c={community} className="h-20" />
               <div className="p-5">
                 <p className="text-small text-white/70">{from.name} invited you to</p>
                 <p className="font-display text-heading font-bold">{community.name}</p>
@@ -53,7 +54,7 @@ export default function Home() {
           {myCommunities.map((c) => (
             <li key={c.id}>
               <Link href={`/community/?id=${c.id}`} className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]">
-                <span className={`h-12 w-12 shrink-0 rounded-2xl bg-gradient-to-br ${c.gradient}`} aria-hidden />
+                <CommunityPhoto c={c} />
                 <span className="min-w-0">
                   <span className="block font-display font-bold">{c.name}</span>
                   <span className="text-small text-white/60">{memberCount(c.id)} members · {roleLabel[roleIn(c.id)!]}</span>

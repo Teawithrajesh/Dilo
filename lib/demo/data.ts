@@ -6,7 +6,16 @@ export type Role = "owner" | "admin" | "moderator" | "member";
 
 export type Person = { id: PersonId; name: string; short: string; label: string; blurb: string; gradient: string };
 export type CommunityType = "Family" | "Friends" | "Community";
-export type Community = { id: string; name: string; type: CommunityType; description: string; gradient: string };
+export type Community = {
+  id: string;
+  name: string;
+  type: CommunityType;
+  description: string;
+  gradient: string; // fallback cover colour
+  /** Picked on this phone; a local preview link (blob:) — never uploaded in the demo. */
+  coverImage?: string;
+  photo?: string;
+};
 export type Membership = { communityId: string; personId: PersonId; role: Role };
 export type DemoEvent = {
   id: string;

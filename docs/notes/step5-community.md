@@ -27,3 +27,15 @@ Built (demo data, in this browser tab only):
 | New screens: banner, no side-scroll, 44 px targets | Pass |
 
 Real app (Phase 2): invite tokens are random 128-bit values stored hashed; all of these rules are enforced by the database (Row Level Security + database functions), not by the screens.
+
+## Revision 1 (26 Nov 2026): community photo and cover banner
+Founder feedback: community creators should be able to add their own image and a photo banner, like Facebook.
+- Community page header is now Facebook-style: a **cover banner** with the **community photo** overlapping it. Owners and admins see **Add/Change cover** and a camera button on the photo; members and moderators don't.
+- **Create community** has a live profile preview: add a cover and a photo before creating; colour covers remain the fallback.
+- Photos also show on Home, the Communities list and the invite landing page.
+- JPG/PNG/WebP up to 5 MB. Pictures stay on the phone (local preview); nothing is uploaded in the demo. Phase 2 stores them in private Supabase Storage with short-lived links.
+
+| Check | Result |
+|---|---|
+| Build | Pass |
+| `npm test` (phone + desktop) | **100/100 pass** (adds: owner adds cover + photo, members can't, non-image refused, create with images) |

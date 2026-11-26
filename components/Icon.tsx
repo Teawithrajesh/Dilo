@@ -20,6 +20,7 @@ const paths = {
   calendar: "M4 6h16v15H4zM4 10h16M8 3v4M16 3v4",
   swap: "M7 7h13l-4-4M17 17H4l4 4",
   mail: "M3 6h18v12H3zM3 7l9 7 9-7",
+  camera: "M4 8h3l2-3h6l2 3h3v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
 } as const;
 
 export type IconName = keyof typeof paths;

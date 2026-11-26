@@ -8,6 +8,7 @@ export const can = {
   approveMembers: (role: Role | null) => role !== null && rank[role] >= rank.moderator,
   manageRoles: (role: Role | null) => role !== null && rank[role] >= rank.admin,
   createEvent: (role: Role | null) => role !== null,
+  editCommunity: (role: Role | null) => role !== null && rank[role] >= rank.admin,
   invite: (role: Role | null) => role !== null && rank[role] >= rank.moderator,
   /** You can remove someone only if your role is higher than theirs (so nobody can remove the owner). */
   remove: (actor: Role | null, target: Role) => actor !== null && rank[actor] >= rank.moderator && rank[actor] > rank[target],

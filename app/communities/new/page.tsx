@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AppShell } from "@/components/app/AppShell";
+import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
+import { ImagePick } from "@/components/app/ImagePick";
+import { Icon } from "@/components/Icon";
 import { coverChoices, type CommunityType } from "@/lib/demo/data";
 import { useDemo } from "@/lib/demo/store";
 
@@ -17,21 +20,51 @@ export default function NewCommunity() {
   const [type, setType] = useState<CommunityType>("Family");
   const [description, setDescription] = useState("");
   const [gradient, setGradient] = useState(coverChoices[0]);
+  const [coverImage, setCoverImage] = useState<string | undefined>();
+  const [photo, setPhoto] = useState<string | undefined>();
   const [error, setError] = useState<string | null>(null);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) return setError("Please give your community a name.");
-    const id = d.createCommunity({ name, type, description, gradient });
+    const id = d.createCommunity({ name, type, description, gradient, coverImage, photo });
     router.push(`/community/?id=${id}`);
   }
 
   return (
     <AppShell title="New community">
       <form onSubmit={submit} noValidate className="space-y-6">
-        <div className={`h-28 rounded-3xl bg-gradient-to-br ${gradient}`} aria-hidden />
+        {/* Live preview: cover banner + community photo, like a profile page */}
+        <div className="overflow-hidden rounded-3xl border border-white/10">
+          <div className="relative">
+            <Cover c={{ gradient, coverImage, name: name || "New community" }} className="h-36" />
+            <ImagePick
+              label="Add cover photo"
+              testId="new-cover-input"
+              onPick={setCoverImage}
+              className="absolute bottom-3 right-3 inline-flex min-h-11 items-center gap-2 rounded-full bg-black/55 px-4 text-small font-semibold text-white backdrop-blur"
+            >
+              <Icon name="camera" className="h-4 w-4" /> {coverImage ? "Change cover" : "Add cover"}
+            </ImagePick>
+          </div>
+          <div className="relative -mt-10 flex items-end gap-3 px-4 pb-4">
+            <div className="relative">
+              <CommunityPhoto c={{ gradient, photo, name: name || "New community" }} size="h-20 w-20 text-heading" ring />
+              <ImagePick
+                label="Add community photo"
+                testId="new-photo-input"
+                onPick={setPhoto}
+                className="absolute -bottom-1 -right-1 grid h-11 w-11 place-items-center rounded-full border-4 border-navy bg-white text-navy"
+              >
+                <Icon name="camera" className="h-4 w-4" />
+              </ImagePick>
+            </div>
+            <p className="pb-1 font-display font-bold">{name || "Your community"}</p>
+          </div>
+        </div>
+
         <fieldset>
-          <legend className="text-small font-semibold">Cover</legend>
+          <legend className="text-small font-semibold">No photo yet? Pick a colour</legend>
           <div className="mt-2 flex gap-3">
             {coverChoices.map((g, i) => (
               <button

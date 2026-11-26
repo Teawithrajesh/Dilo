@@ -4,6 +4,8 @@ import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
 import { EventCard, SectionTitle } from "@/components/app/ui";
 import { Avatar } from "@/components/app/Avatar";
+import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
+import { ImagePick } from "@/components/app/ImagePick";
 import { Icon } from "@/components/Icon";
 import { useDemo } from "@/lib/demo/store";
 import { can, roleLabel } from "@/lib/permissions";
@@ -20,7 +22,7 @@ export function PrivateWall({ title = "This community is private" }: { title?: s
 }
 
 export function CommunityView({ id }: { id: string }) {
-  const { community, roleIn, memberCount, eventsIn, requestsFor, members } = useDemo();
+  const { community, roleIn, memberCount, eventsIn, requestsFor, members, setCommunityImages } = useDemo();
   const c = community(id);
   const role = roleIn(id);
 
@@ -38,8 +40,36 @@ export function CommunityView({ id }: { id: string }) {
 
   return (
     <AppShell title={c.name}>
-      <div className={`-mx-4 -mt-6 h-32 bg-gradient-to-br ${c.gradient} opacity-80`} aria-hidden />
-      <div className="-mt-8 rounded-3xl border border-white/10 bg-navy p-5 shadow-xl">
+      {/* Facebook-style header: cover banner, and the community photo overlapping it */}
+      <div className="relative -mx-4 -mt-6">
+        <Cover c={c} className="h-44 sm:h-56" />
+        {can.editCommunity(role) && (
+          <ImagePick
+            label="Change cover photo"
+            testId="cover-input"
+            onPick={(url) => setCommunityImages(id, { coverImage: url })}
+            className="absolute bottom-3 right-3 inline-flex min-h-11 items-center gap-2 rounded-full bg-black/55 px-4 text-small font-semibold text-white backdrop-blur"
+          >
+            <Icon name="camera" className="h-4 w-4" /> {c.coverImage ? "Change cover" : "Add cover"}
+          </ImagePick>
+        )}
+      </div>
+      <div className="relative -mt-12 px-1">
+        <div className="relative inline-block">
+          <CommunityPhoto c={c} size="h-24 w-24 text-title" ring />
+          {can.editCommunity(role) && (
+            <ImagePick
+              label="Change community photo"
+              testId="photo-input"
+              onPick={(url) => setCommunityImages(id, { photo: url })}
+              className="absolute -bottom-1 -right-1 grid h-11 w-11 place-items-center rounded-full border-4 border-navy bg-white text-navy"
+            >
+              <Icon name="camera" className="h-4 w-4" />
+            </ImagePick>
+          )}
+        </div>
+      </div>
+      <div className="mt-3">
         <p className="font-display text-title font-extrabold">{c.name}</p>
         {c.description && <p className="mt-1 text-small text-white/70">{c.description}</p>}
         <p className="mt-3 flex items-center gap-2 text-small text-white/60">

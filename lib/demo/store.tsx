@@ -40,7 +40,8 @@ type DemoState = {
   myNotices: Notice[];
   unread: number;
   // actions
-  createCommunity: (input: { name: string; type: CommunityType; description: string; gradient: string }) => string;
+  createCommunity: (input: { name: string; type: CommunityType; description: string; gradient: string; coverImage?: string; photo?: string }) => string;
+  setCommunityImages: (communityId: string, images: { coverImage?: string; photo?: string }) => Result;
   createInvite: (communityId: string) => InviteLink | null;
   revokeInvite: (code: string) => void;
   requestToJoin: (communityId: string, viaCode?: string) => void;
@@ -162,11 +163,17 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       myNotices,
       unread: myNotices.filter((n) => !n.read).length,
 
-      createCommunity: ({ name, type, description, gradient }) => {
+      createCommunity: ({ name, type, description, gradient, coverImage, photo }) => {
         const id = slugify(name);
-        setCommunities((c) => [...c, { id, name: name.trim(), type, description: description.trim(), gradient }]);
+        setCommunities((c) => [...c, { id, name: name.trim(), type, description: description.trim(), gradient, coverImage, photo }]);
         if (meId) setMemberships((m) => [...m, { communityId: id, personId: meId, role: "owner" }]);
         return id;
+      },
+
+      setCommunityImages: (cid, images) => {
+        if (!can.editCommunity(roleIn(cid))) return { ok: false, error: "Only owners and admins can change the photos." };
+        setCommunities((c) => c.map((x) => (x.id === cid ? { ...x, ...images } : x)));
+        return { ok: true };
       },
 
       createInvite: (cid) => {
