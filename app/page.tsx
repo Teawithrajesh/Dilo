@@ -11,7 +11,7 @@ export default function Home() {
 
       <div className="relative">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/dilo-logo.png" alt="DILO" width={666} height={709} className="mx-auto h-auto w-48 sm:w-56" />
+        <img src="/brand/dilo-logo.png" alt="DILO" width={666} height={705} className="mx-auto h-auto w-48 sm:w-56" />
         <p className="mt-8 text-balance font-display text-[1.0625rem] font-semibold tracking-tight text-white/90 sm:text-heading">
           Together, We Make Dreams Come True.
         </p>

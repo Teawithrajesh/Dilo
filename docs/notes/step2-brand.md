@@ -59,3 +59,16 @@ Founder feedback: smooth the infinity; make the "O" in DILO slightly open (ring 
 | Logo loads, no failed requests, no console errors | Pass |
 | No scroll on the splash | Pass |
 | Chromium installability errors | None |
+
+## Revision 4 (26 Nov 2026): round gradient O, softer and smoother symbol
+Founder feedback: keep the O fully round and give it a colour that matches the logo; smooth the symbol; its colours were too harsh.
+- "O": fully round again, filled with a pink `#FD2E7A` → orange `#FF9A1F` gradient (the two people-dot colours).
+- Symbol: smoother outline (stronger alpha smoothing), softer shading (masked colour blur 55%), slightly lower saturation (−5%) and contrast (−8%), deep shadows lifted.
+- Logo and all app icons/favicons rebuilt.
+
+| Re-check (Pixel 7 emulation) | Result |
+|---|---|
+| Build | Pass |
+| Logo loads, no failed requests, no console errors | Pass |
+| No scroll on the splash | Pass |
+| Chromium installability errors | None |
