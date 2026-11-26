@@ -8,6 +8,7 @@ import { PrivateWall } from "@/components/app/CommunityView";
 import { QueryParam } from "@/components/app/QueryParam";
 import { SectionTitle } from "@/components/app/ui";
 import { useDemo } from "@/lib/demo/store";
+import { ReportButton } from "@/components/app/ReportButton";
 import { can, roleLabel } from "@/lib/permissions";
 
 const small = "inline-flex min-h-11 items-center justify-center rounded-full px-4 text-small font-semibold transition active:scale-[0.98]";
@@ -90,6 +91,16 @@ function Members({ id }: { id: string }) {
                 </span>
                 <span className="rounded-full bg-white/10 px-2 py-0.5 text-tiny font-semibold" data-testid="member-role">{roleLabel[m.role]}</span>
               </div>
+              {!isMe && (
+                <div className="mt-2 flex flex-wrap items-start gap-1">
+                  <ReportButton communityId={id} target={{ type: "member", personId: m.personId }} summary={`Member: ${m.person.name}`} label="Report" />
+                  {d.blocked.includes(m.personId) ? (
+                    <button type="button" onClick={() => d.unblock(m.personId)} className="inline-flex min-h-11 items-center rounded-full px-3 text-small font-semibold text-white/70">Unblock</button>
+                  ) : (
+                    <button type="button" onClick={() => { d.block(m.personId); setMsg({ kind: "ok", text: `You blocked ${m.person.short}. Their messages are hidden from you.` }); }} className="inline-flex min-h-11 items-center rounded-full px-3 text-small font-semibold text-white/70">Block</button>
+                  )}
+                </div>
+              )}
               {(canRole || canRemove) && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {canRole && m.role === "member" && (

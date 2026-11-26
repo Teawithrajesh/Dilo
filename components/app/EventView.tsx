@@ -11,6 +11,7 @@ import { getCelebration } from "@/lib/celebrations";
 import { useDemo } from "@/lib/demo/store";
 import { Wishlist } from "@/components/app/event/Wishlist";
 import { Contributions } from "@/components/app/event/Contributions";
+import { ReportButton } from "@/components/app/ReportButton";
 
 /** Event page in its celebration theme. Wishlist and contributions arrive in Step 6. */
 export function EventView({ id }: { id: string }) {
@@ -107,6 +108,9 @@ export function EventView({ id }: { id: string }) {
         <Wishlist eventId={e.id} c={c} />
         <div className="mt-8">
           <Contributions eventId={e.id} c={c} />
+        </div>
+        <div className="mt-8 flex justify-center">
+          <ReportButton communityId={e.communityId} target={{ type: "event", eventId: e.id }} summary={`Celebration: ${e.title}`} label="Report this celebration" />
         </div>
       </div>
     </main>

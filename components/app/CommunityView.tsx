@@ -24,7 +24,7 @@ export function PrivateWall({ title = "This community is private" }: { title?: s
 }
 
 export function CommunityView({ id }: { id: string }) {
-  const { community, roleIn, memberCount, eventsIn, requestsFor, members, setCommunityImages, feed } = useDemo();
+  const { community, roleIn, memberCount, eventsIn, requestsFor, members, setCommunityImages, feed, isSuspended } = useDemo();
   const c = community(id);
   const role = roleIn(id);
 
@@ -32,6 +32,18 @@ export function CommunityView({ id }: { id: string }) {
     return (
       <AppShell title="Private">
         <PrivateWall />
+      </AppShell>
+    );
+  }
+
+  if (isSuspended(id)) {
+    return (
+      <AppShell title={c.name}>
+        <div className="rounded-3xl border border-[#ffb4c4]/30 bg-white/[0.04] p-8 text-center" data-testid="suspended-wall">
+          <Icon name="shield" className="mx-auto h-10 w-10 text-orange" />
+          <p className="mt-4 font-display text-heading font-bold">This community is paused</p>
+          <p className="mt-2 text-small text-white/70">DILO is reviewing a report. Your data is safe and nothing was deleted.</p>
+        </div>
       </AppShell>
     );
   }

@@ -9,11 +9,21 @@ import { useDemo } from "@/lib/demo/store";
 import { roleLabel } from "@/lib/permissions";
 
 export default function Home() {
-  const { me, myCommunities, myUpcoming, myInvites, roleIn, memberCount, requestToJoin } = useDemo();
+  const { me, myCommunities, myUpcoming, myInvites, roleIn, memberCount, requestToJoin, isPlatformAdmin: d_isAdmin } = useDemo();
   return (
     <AppShell title="Home">
       <p className="text-white/70">Namaste,</p>
       <p className="font-display text-title font-extrabold">{me?.short} 👋</p>
+
+      {d_isAdmin && (
+        <Link href="/admin/" className="mt-6 flex items-center justify-between rounded-3xl border border-gold/40 bg-gold/10 p-5" data-testid="admin-card">
+          <span>
+            <span className="block font-display font-bold">Admin dashboard</span>
+            <span className="text-small text-white/70">Totals, reports and suspensions</span>
+          </span>
+          <span aria-hidden className="font-display text-title">→</span>
+        </Link>
+      )}
 
       {myInvites.length > 0 && (
         <>
