@@ -15,6 +15,11 @@ const paths = {
   receipt: "M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6",
   eye: "M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
   chevron: "M6 9l6 6 6-6",
+  bell: "M6 16V11a6 6 0 1 1 12 0v5l2 2H4zM10 21h4",
+  user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4.4 3.6-8 8-8s8 3.6 8 8",
+  calendar: "M4 6h16v15H4zM4 10h16M8 3v4M16 3v4",
+  swap: "M7 7h13l-4-4M17 17H4l4 4",
+  mail: "M3 6h18v12H3zM3 7l9 7 9-7",
 } as const;
 
 export type IconName = keyof typeof paths;

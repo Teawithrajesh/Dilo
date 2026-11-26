@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DemoBanner } from "@/components/DemoBanner";
 import { RegisterSW } from "@/components/RegisterSW";
+import { DemoProvider } from "@/lib/demo/store";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/plus-jakarta-sans";
 import "./globals.css";
@@ -29,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-dvh bg-navy antialiased">
         <DemoBanner />
         <RegisterSW />
-        {children}
+        <DemoProvider>{children}</DemoProvider>
       </body>
     </html>
   );

@@ -116,7 +116,7 @@ export default function Welcome() {
             ))}
           </nav>
           <Link
-            href="/join/"
+            href="/signin/"
             className="inline-flex min-h-11 items-center rounded-full bg-white px-5 font-display text-small font-bold text-navy transition hover:bg-white/90"
           >
             Join
@@ -139,7 +139,7 @@ export default function Welcome() {
                 Bring your loved ones together in a private space. Turn celebrations into meaningful memories, and small contributions into big dreams.
               </p>
               <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center md:justify-start">
-                <PrimaryButton href="/join/">Create Your Community</PrimaryButton>
+                <PrimaryButton href="/signin/">Create Your Community</PrimaryButton>
                 <GhostButton href="#how">Discover How DILO Works</GhostButton>
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function Welcome() {
           <div className="relative mx-auto max-w-xl">
             <h2 className="text-balance text-title font-extrabold sm:text-display">Start your first dream today</h2>
             <p className="mt-3 text-white/70">It takes less than five minutes to create a private community.</p>
-            <div className="mt-8"><PrimaryButton href="/join/">Create Your Community</PrimaryButton></div>
+            <div className="mt-8"><PrimaryButton href="/signin/">Create Your Community</PrimaryButton></div>
           </div>
         </section>
       </main>

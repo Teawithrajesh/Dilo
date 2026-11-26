@@ -48,12 +48,10 @@ test.describe("landing page", () => {
     await expect(page.locator("footer")).toHaveCount(1);
   });
 
-  test("Create Your Community goes to sign-up", async ({ page }) => {
+  test("Create Your Community goes to demo sign-in", async ({ page }) => {
     await page.getByRole("link", { name: "Create Your Community" }).first().click();
-    await expect(page).toHaveURL(/\/join\/$/);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sign-up opens soon");
-    await page.getByRole("link", { name: "Back to DILO" }).click();
-    await expect(page).toHaveURL(/\/welcome\/$/);
+    await expect(page).toHaveURL(/\/signin\/$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Try DILO as…");
   });
 
   test("Discover How DILO Works scrolls to How it works", async ({ page }) => {
@@ -62,9 +60,9 @@ test.describe("landing page", () => {
     await expect(page.locator("#how h2")).toBeInViewport();
   });
 
-  test("Join button goes to sign-up", async ({ page }) => {
+  test("Join button goes to demo sign-in", async ({ page }) => {
     await page.getByRole("link", { name: "Join", exact: true }).click();
-    await expect(page).toHaveURL(/\/join\/$/);
+    await expect(page).toHaveURL(/\/signin\/$/);
   });
 
   test("every link points somewhere real", async ({ page, request }) => {
