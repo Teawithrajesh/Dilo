@@ -5,7 +5,17 @@ export type PersonId = "priya" | "amit" | "neha" | "ravi";
 export type Role = "owner" | "admin" | "moderator" | "member";
 
 export type Person = { id: PersonId; name: string; short: string; label: string; blurb: string; gradient: string };
-export type Community = { id: string; name: string; type: "Family" | "Friends"; description: string; gradient: string };
+export type CommunityType = "Family" | "Friends" | "Community";
+export type Community = {
+  id: string;
+  name: string;
+  type: CommunityType;
+  description: string;
+  gradient: string; // fallback cover colour
+  /** Picked on this phone; a local preview link (blob:) — never uploaded in the demo. */
+  coverImage?: string;
+  photo?: string;
+};
 export type Membership = { communityId: string; personId: PersonId; role: Role };
 export type DemoEvent = {
   id: string;
@@ -17,8 +27,15 @@ export type DemoEvent = {
   recorded: number; // whole rupees, self-reported records only
   wishes: number;
   dream: string; // the dream wish
+  createdBy?: PersonId;
+  /** Local preview links picked on this phone (never uploaded in the demo). */
+  photo?: string;
+  invitation?: string;
 };
+/** A personal invite already sent to someone (shown on their Home). */
 export type Invite = { communityId: string; personId: PersonId; from: PersonId };
+/** A shareable invite link. Real app: random 128-bit token, stored hashed. */
+export type InviteLink = { code: string; communityId: string; createdBy: PersonId; expiresAt: number; revoked: boolean; maxUses: number; uses: number };
 export type Notice = { id: string; personId: PersonId; text: string; when: string; read: boolean };
 
 export const people: Person[] = [
@@ -62,4 +79,18 @@ export const notices: Notice[] = [
   { id: "n6", personId: "neha", text: "Priya created Mummy & Papa's 25th Anniversary.", when: "5h ago", read: false },
   { id: "n7", personId: "neha", text: "You are the owner of Delhi Friends.", when: "Last week", read: true },
   { id: "n8", personId: "ravi", text: "Priya Sharma invited you to Sharma Family.", when: "1h ago", read: false },
+];
+
+const DAY = 86_400_000;
+/** Seeded links: one live, one expired (to show what an old link looks like). */
+export const inviteLinks: InviteLink[] = [
+  { code: "SHARMA7Q", communityId: "sharma-family", createdBy: "priya", expiresAt: Date.now() + 7 * DAY, revoked: false, maxUses: 20, uses: 1 },
+  { code: "OLDLINK1", communityId: "sharma-family", createdBy: "priya", expiresAt: Date.now() - DAY, revoked: false, maxUses: 20, uses: 3 },
+];
+
+export const coverChoices = [
+  "from-pink via-orange to-gold",
+  "from-violet via-pink to-[#ff8fb1]",
+  "from-[#2bb3a3] via-violet to-pink",
+  "from-orange via-gold to-[#f6e7b0]",
 ];

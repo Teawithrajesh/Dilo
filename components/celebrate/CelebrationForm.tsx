@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useDemo } from "@/lib/demo/store";
 import type { Celebration } from "@/lib/celebrations";
 import { Icon } from "@/components/Icon";
 import { Divider, Panel } from "./Theme";
@@ -27,6 +30,8 @@ export function FramedUpload({
   gold,
   testId,
   tilt = 0,
+  initialUrl,
+  onPicked,
 }: {
   label: string;
   hint: string;
@@ -34,12 +39,12 @@ export function FramedUpload({
   gold: string;
   testId: string;
   tilt?: number;
+  initialUrl?: string;
+  onPicked?: (url: string) => void;
 }) {
   const id = useId();
-  const [url, setUrl] = useState<string | null>(null);
+  const [url, setUrl] = useState<string | null>(initialUrl ?? null);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => () => { if (url) URL.revokeObjectURL(url); }, [url]);
 
   function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -48,10 +53,9 @@ export function FramedUpload({
     if (!IMAGE_TYPES.includes(file.type)) return setError("Please choose a JPG, PNG or WebP image.");
     if (file.size > MAX_IMAGE_BYTES) return setError("That image is over 5 MB. Please choose a smaller one.");
     setError(null);
-    setUrl((old) => {
-      if (old) URL.revokeObjectURL(old);
-      return URL.createObjectURL(file);
-    });
+    const next = URL.createObjectURL(file); // kept for the whole demo session
+    setUrl(next);
+    onPicked?.(next);
   }
 
   const isCard = shape === "card";
@@ -100,11 +104,23 @@ export function FramedUpload({
 }
 
 /** Photo + invitation, composed like two keepsakes laid on a table. */
-export function Keepsakes({ c }: { c: Celebration }) {
+export function Keepsakes({
+  c,
+  photo,
+  invitation,
+  onPhoto,
+  onInvitation,
+}: {
+  c: Celebration;
+  photo?: string;
+  invitation?: string;
+  onPhoto?: (url: string) => void;
+  onInvitation?: (url: string) => void;
+}) {
   return (
     <div className="grid gap-12 sm:grid-cols-2 sm:gap-8">
-      <FramedUpload label={c.photoLabel} hint={c.photoHint} shape={c.photoShape} gold={c.gold} testId="photo" tilt={-2} />
-      <FramedUpload label="Invitation card" hint="Tap to upload your card" shape="card" gold={c.gold} testId="invite" tilt={2} />
+      <FramedUpload label={c.photoLabel} hint={c.photoHint} shape={c.photoShape} gold={c.gold} testId="photo" tilt={-2} initialUrl={photo} onPicked={onPhoto} />
+      <FramedUpload label="Invitation card" hint="Tap to upload your card" shape="card" gold={c.gold} testId="invite" tilt={2} initialUrl={invitation} onPicked={onInvitation} />
     </div>
   );
 }
@@ -113,10 +129,27 @@ const fieldLabel = "block text-tiny font-semibold uppercase tracking-[0.3em]";
 const fieldBox = "w-full rounded-2xl border bg-black/20 text-white placeholder:text-white/40 focus:outline-none";
 
 export function CelebrationForm({ c }: { c: Celebration }) {
+  const d = useDemo();
+  const router = useRouter();
   const [wish, setWish] = useState("");
   const [budget, setBudget] = useState("");
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
+  const [communityId, setCommunityId] = useState("");
+  const [photo, setPhoto] = useState<string | undefined>();
+  const [invitation, setInvitation] = useState<string | undefined>();
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Coming from a community page? Pre-select it.
+  useEffect(() => {
+    const pre = new URLSearchParams(window.location.search).get("community");
+    if (pre) setCommunityId(pre);
+  }, []);
+
+  const signedIn = d.ready && !!d.me;
+  const mine = d.myCommunities;
+  const today = new Date().toISOString().slice(0, 10);
 
   const budgetNumber = Number(budget.replace(/[^0-9]/g, ""));
 
@@ -127,10 +160,21 @@ export function CelebrationForm({ c }: { c: Celebration }) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (signedIn && mine.length > 0) {
+      if (!title.trim()) return setError(`Please give the ${c.title.toLowerCase()} a name.`);
+      if (!date) return setError("Please choose the date.");
+      if (date < today) return setError("Please choose today or a future date.");
+    }
     if (!wish.trim()) return setError("Please write the dream wish.");
     if (!budgetNumber) return setError("Please enter an estimated budget in rupees.");
     if (budgetNumber > MAX_BUDGET) return setError("Please enter a budget up to ₹1,00,00,000.");
     setError(null);
+    if (signedIn && mine.length > 0) {
+      const r = d.createEvent({ communityId: mine.some((m) => m.id === communityId) ? communityId : mine[0].id, kind: c.slug, title, date, goal: budgetNumber, dream: wish, photo, invitation });
+      if (!r.ok) return setError(r.error);
+      router.push(`/event/?id=${r.id}`);
+      return;
+    }
     setDone(true);
   }
 
@@ -138,11 +182,40 @@ export function CelebrationForm({ c }: { c: Celebration }) {
 
   return (
     <form onSubmit={onSubmit} noValidate className="mx-auto mt-14 max-w-3xl">
-      <Keepsakes c={c} />
+      <Keepsakes c={c} onPhoto={setPhoto} onInvitation={setInvitation} />
 
       <Divider gold={c.gold} />
 
       <Panel gold={c.gold}>
+        {signedIn && mine.length > 0 && (
+          <div className="mb-6 space-y-6">
+            <div>
+              <label htmlFor="etitle" className={fieldLabel} style={{ color: c.gold }}>Celebration name</label>
+              <input
+                id="etitle"
+                value={title}
+                maxLength={60}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder={`e.g. Riya's ${c.title}`}
+                className={`${fieldBox} mt-3 min-h-14 px-4 font-serif text-[1.35rem] focus:border-white/40`}
+                style={border}
+              />
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <label htmlFor="edate" className={fieldLabel} style={{ color: c.gold }}>Date</label>
+                <input id="edate" type="date" min={today} value={date} onChange={(e) => setDate(e.target.value)} className={`${fieldBox} mt-3 min-h-14 px-4 [color-scheme:dark] focus:border-white/40`} style={border} />
+              </div>
+              <div>
+                <label htmlFor="ecommunity" className={fieldLabel} style={{ color: c.gold }}>Community</label>
+                <select id="ecommunity" value={mine.some((m) => m.id === communityId) ? communityId : mine[0].id} onChange={(e) => setCommunityId(e.target.value)} className={`${fieldBox} mt-3 min-h-14 px-4 [color-scheme:dark] focus:border-white/40`} style={border}>
+                  {mine.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+                </select>
+              </div>
+            </div>
+            <p className="text-tiny text-white/60">Everyone in the community gets a notification.</p>
+          </div>
+        )}
         <label htmlFor="wish" className={fieldLabel} style={{ color: c.gold }}>Dream wish</label>
         <textarea
           id="wish"
@@ -193,6 +266,11 @@ export function CelebrationForm({ c }: { c: Celebration }) {
               <Icon name="arrow" className="h-5 w-5" />
             </button>
             <p className="mt-4 text-tiny text-white/60">Photos stay on your phone. Nothing is uploaded in this demo.</p>
+            {d.ready && !d.me && (
+              <p className="mt-2 text-small text-white/70">
+                <Link href="/signin/" className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4">Sign in</Link> to add it to your community.
+              </p>
+            )}
           </>
         )}
       </div>

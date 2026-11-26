@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
+import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
 import { EventCard, SectionTitle } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
 import { useDemo } from "@/lib/demo/store";
@@ -19,7 +20,7 @@ export default function Home() {
           <SectionTitle>Pending invites</SectionTitle>
           {myInvites.map(({ community, from, requested }) => (
             <div key={community.id} className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04]" data-testid="invite-card">
-              <div className={`h-20 bg-gradient-to-br ${community.gradient} opacity-80`} />
+              <Cover c={community} className="h-20" />
               <div className="p-5">
                 <p className="text-small text-white/70">{from.name} invited you to</p>
                 <p className="font-display text-heading font-bold">{community.name}</p>
@@ -52,8 +53,8 @@ export default function Home() {
         <ul className="grid gap-3 sm:grid-cols-2">
           {myCommunities.map((c) => (
             <li key={c.id}>
-              <Link href={`/communities/${c.id}/`} className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]">
-                <span className={`h-12 w-12 shrink-0 rounded-2xl bg-gradient-to-br ${c.gradient}`} aria-hidden />
+              <Link href={`/community/?id=${c.id}`} className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]">
+                <CommunityPhoto c={c} />
                 <span className="min-w-0">
                   <span className="block font-display font-bold">{c.name}</span>
                   <span className="text-small text-white/60">{memberCount(c.id)} members · {roleLabel[roleIn(c.id)!]}</span>
@@ -63,6 +64,19 @@ export default function Home() {
           ))}
         </ul>
       )}
+
+      {/* Everyone can start their own community — e.g. an uncle invited to one family can create one for his wife's side. */}
+      <Link
+        href="/communities/new/"
+        data-testid="create-own"
+        className="mt-4 flex items-center gap-4 rounded-3xl border border-dashed border-white/20 p-4 transition hover:border-white/40 hover:bg-white/[0.04]"
+      >
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/10 font-display text-title font-bold">+</span>
+        <span>
+          <span className="block font-display font-bold">Start your own community</span>
+          <span className="text-small text-white/70">For your side of the family, your in-laws or your friends.</span>
+        </span>
+      </Link>
 
       <SectionTitle>Upcoming celebrations</SectionTitle>
       {myUpcoming.length === 0 ? (
