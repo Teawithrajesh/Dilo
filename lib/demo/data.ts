@@ -27,6 +27,10 @@ export type DemoEvent = {
   recorded: number; // whole rupees, self-reported records only
   wishes: number;
   dream: string; // the dream wish
+  createdBy?: PersonId;
+  /** Local preview links picked on this phone (never uploaded in the demo). */
+  photo?: string;
+  invitation?: string;
 };
 /** A personal invite already sent to someone (shown on their Home). */
 export type Invite = { communityId: string; personId: PersonId; from: PersonId };

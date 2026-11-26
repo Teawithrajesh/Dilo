@@ -65,6 +65,19 @@ export default function Home() {
         </ul>
       )}
 
+      {/* Everyone can start their own community — e.g. an uncle invited to one family can create one for his wife's side. */}
+      <Link
+        href="/communities/new/"
+        data-testid="create-own"
+        className="mt-4 flex items-center gap-4 rounded-3xl border border-dashed border-white/20 p-4 transition hover:border-white/40 hover:bg-white/[0.04]"
+      >
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/10 font-display text-title font-bold">+</span>
+        <span>
+          <span className="block font-display font-bold">Start your own community</span>
+          <span className="text-small text-white/70">For your side of the family, your in-laws or your friends.</span>
+        </span>
+      </Link>
+
       <SectionTitle>Upcoming celebrations</SectionTitle>
       {myUpcoming.length === 0 ? (
         <p className="rounded-3xl border border-dashed border-white/15 p-6 text-center text-small text-white/70">

@@ -5,6 +5,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import * as seed from "./data";
 import type { Community, CommunityType, DemoEvent, InviteLink, Membership, Notice, Person, PersonId, Role } from "./data";
+import type { CelebrationSlug } from "@/lib/celebrations";
 import { can } from "@/lib/permissions";
 
 const SESSION_KEY = "dilo-demo-person";
@@ -30,6 +31,7 @@ type DemoState = {
   members: (communityId: string) => (Membership & { person: Person })[];
   myCommunities: Community[];
   memberCount: (communityId: string) => number;
+  event: (id: string) => DemoEvent | undefined;
   eventsIn: (communityId: string) => DemoEvent[];
   myUpcoming: DemoEvent[];
   myInvites: { community: Community; from: Person; requested: boolean }[];
@@ -42,6 +44,8 @@ type DemoState = {
   // actions
   createCommunity: (input: { name: string; type: CommunityType; description: string; gradient: string; coverImage?: string; photo?: string }) => string;
   setCommunityImages: (communityId: string, images: { coverImage?: string; photo?: string }) => Result;
+  createEvent: (input: { communityId: string; kind: CelebrationSlug; title: string; date: string; goal: number; dream: string; photo?: string; invitation?: string }) => { ok: true; id: string } | { ok: false; error: string };
+  setEventImages: (eventId: string, images: { photo?: string; invitation?: string }) => void;
   createInvite: (communityId: string) => InviteLink | null;
   revokeInvite: (code: string) => void;
   requestToJoin: (communityId: string, viaCode?: string) => void;
@@ -74,6 +78,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [links, setLinks] = useState<InviteLink[]>(seed.inviteLinks);
   const [requests, setRequests] = useState<JoinRequest[]>([]);
   const [notices, setNotices] = useState<Notice[]>(seed.notices);
+  const [events, setEvents] = useState<DemoEvent[]>(seed.events);
 
   useEffect(() => {
     try {
@@ -145,8 +150,9 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         memberships.filter((m) => m.communityId === cid).map((m) => ({ ...m, person: person(m.personId) })),
       myCommunities,
       memberCount: (cid) => memberships.filter((m) => m.communityId === cid).length + (seed.extraMemberCounts[cid] ?? 0),
-      eventsIn: (cid) => seed.events.filter((e) => e.communityId === cid),
-      myUpcoming: seed.events
+      event: (id) => events.find((e) => e.id === id),
+      eventsIn: (cid) => events.filter((e) => e.communityId === cid),
+      myUpcoming: events
         .filter((e) => roleIn(e.communityId) !== null && e.date >= today)
         .sort((a, b) => a.date.localeCompare(b.date)),
       myInvites: seed.invites
@@ -174,6 +180,21 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         if (!can.editCommunity(roleIn(cid))) return { ok: false, error: "Only owners and admins can change the photos." };
         setCommunities((c) => c.map((x) => (x.id === cid ? { ...x, ...images } : x)));
         return { ok: true };
+      },
+
+      createEvent: ({ communityId, kind, title, date, goal, dream, photo, invitation }) => {
+        if (!meId || !can.createEvent(roleIn(communityId))) return { ok: false, error: "Join this community before adding a celebration." };
+        const id = slugify(title);
+        setEvents((e) => [...e, { id, communityId, kind, title: title.trim(), date, goal, recorded: 0, wishes: 0, dream: dream.trim(), createdBy: meId, photo, invitation }]);
+        // Every member of the community hears about it (except the person who added it).
+        const others = memberships.filter((m) => m.communityId === communityId && m.personId !== meId).map((m) => m.personId);
+        const when = new Date(date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+        notify(others, `${person(meId).short} added a new celebration in ${community(communityId)?.name}: ${title.trim()} on ${when}.`);
+        return { ok: true, id };
+      },
+
+      setEventImages: (eventId, images) => {
+        setEvents((e) => e.map((x) => (x.id === eventId && roleIn(x.communityId) !== null ? { ...x, ...images } : x)));
       },
 
       createInvite: (cid) => {
@@ -207,8 +228,10 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         setRequests((r) => r.filter((x) => !(x.communityId === cid && x.personId === pid)));
         const name = community(cid)?.name ?? "the community";
         if (approve) {
+          const existing = memberships.filter((m) => m.communityId === cid && m.personId !== meId).map((m) => m.personId);
           setMemberships((m) => [...m, { communityId: cid, personId: pid, role: "member" }]);
           notify([pid], `Welcome! You are now a member of ${name}.`);
+          notify(existing, `${person(pid).name} joined ${name}.`);
         } else {
           notify([pid], `Your request to join ${name} was not approved.`);
         }
@@ -243,7 +266,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
 
       markAllRead: () => setNotices((n) => n.map((x) => (x.personId === meId ? { ...x, read: true } : x))),
     };
-  }, [ready, meId, communities, memberships, links, requests, notices, signIn, signOut]);
+  }, [ready, meId, communities, memberships, links, requests, notices, events, signIn, signOut]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

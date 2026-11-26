@@ -49,3 +49,17 @@ Founder feedback: community creators should be able to add their own image and a
 | Check | Result |
 |---|---|
 | `npm test` (phone + desktop) | **106/106 pass** |
+
+## Revision 2 (26 Nov 2026): link preview, own community, notify every member
+Founder feedback: (1) a shared link should show the DILO image and slogan; (2) someone who joins by invite must be free to create their own community (e.g. for their wife's side of the family); (3) every member of a community must get a notification when there is an event.
+
+1. **Link preview**: site-wide Open Graph + Twitter tags with a 1200×630 share image (`public/og/dilo-share.png`: logo + "Together, We Make Dreams Come True." + "Dream · Share · Support · Celebrate"). The WhatsApp invite text now starts with "💖 DILO — Together, We Make Dreams Come True." The invite landing shows the larger logo and slogan.
+   - Note: WhatsApp builds the preview by fetching the link from the internet, so the picture appears only once DILO is on a public address. Set `NEXT_PUBLIC_SITE_URL` to that address at build time (currently `http://localhost:8080`).
+2. **Own community for everyone**: Home always shows "Start your own community — for your side of the family, your in-laws or your friends". After requesting to join through a link, the landing page offers "+ Create my own community".
+3. **Celebrations notify the whole community**: community page has **Add a celebration** (Birthday · Engagement · Wedding · Anniversary). The themed page, when signed in, asks for the celebration name, date (today or later), community (pre-selected), dream wish, budget, photo and invitation, and creates the event. **Every other member** of that community gets a notification; non-members get nothing. Approving a new member also tells the existing members ("Ravi Kumar joined Sharma Family").
+   - Event pages moved to `/event/?id=…` (so new events work in the static build); "Back" now returns to the event's community.
+
+| Check | Result |
+|---|---|
+| Build | Pass |
+| `npm test` (phone + desktop) | **120/120 pass** (adds: preview tags + share image, WhatsApp text has slogan, invitee creates own community, Home offer, new celebration notifies Neha + Amit and not Ravi, join notice to members, past date refused) |

@@ -29,7 +29,8 @@ function Invite({ id }: { id: string }) {
   }
 
   const url = (code: string) => `${window.location.origin}/join/?code=${code}`;
-  const message = (code: string) => `You're invited to "${c.name}" on DILO, a private space for our family's celebrations. Join here: ${url(code)} (code ${code})`;
+  const message = (code: string) =>
+    `💖 DILO — Together, We Make Dreams Come True.\n\nYou're invited to join "${c.name}", our private space for family celebrations.\n\nJoin here: ${url(code)}\nInvite code: ${code}`;
 
   async function copy(code: string) {
     try {

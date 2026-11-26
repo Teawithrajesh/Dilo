@@ -10,15 +10,31 @@ import "@fontsource/cormorant-garamond/600.css";
 import "@fontsource/cormorant-garamond/600-italic.css";
 import "./globals.css";
 
+const SLOGAN = "Together, We Make Dreams Come True.";
+
+// Link previews (WhatsApp, Facebook, X): DILO image + slogan.
+// Set NEXT_PUBLIC_SITE_URL to the real address once DILO is hosted; previews need a public address.
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:8080"),
   title: "DILO",
-  description: "Together, We Make Dreams Come True.",
+  description: SLOGAN,
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: [
-      { url: "/icons/favicon-48.png", sizes: "48x48", type: "image/png" },
-    ],
+    icon: [{ url: "/icons/favicon-48.png", sizes: "48x48", type: "image/png" }],
     apple: "/icons/apple-touch-icon.png",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "DILO",
+    title: "DILO — " + SLOGAN,
+    description: "A private space for your family's birthdays, engagements, weddings and anniversaries.",
+    images: [{ url: "/og/dilo-share.png", width: 1200, height: 630, alt: "DILO — " + SLOGAN }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DILO — " + SLOGAN,
+    description: "A private space for your family's celebrations.",
+    images: ["/og/dilo-share.png"],
   },
 };
 

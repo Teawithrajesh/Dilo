@@ -7,6 +7,8 @@ import { Avatar } from "@/components/app/Avatar";
 import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
 import { ImagePick } from "@/components/app/ImagePick";
 import { Icon } from "@/components/Icon";
+import { CelebrationIcon } from "@/components/celebrate/CelebrationIcon";
+import { celebrations } from "@/lib/celebrations";
 import { useDemo } from "@/lib/demo/store";
 import { can, roleLabel } from "@/lib/permissions";
 
@@ -101,10 +103,27 @@ export function CommunityView({ id }: { id: string }) {
         </Link>
       )}
 
+      <SectionTitle>Add a celebration</SectionTitle>
+      <div className="grid grid-cols-4 gap-2" data-testid="add-celebration">
+        {celebrations.map((k) => (
+          <Link
+            key={k.slug}
+            href={`/celebrate/${k.slug}/?community=${id}`}
+            className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-tiny font-semibold transition hover:bg-white/[0.08]"
+          >
+            <span className={`grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br ${k.accent} text-navy`}>
+              <CelebrationIcon slug={k.slug} className="h-6 w-6" />
+            </span>
+            {k.title}
+          </Link>
+        ))}
+      </div>
+      <p className="mt-2 text-tiny text-white/60">Everyone in {c.name} gets a notification.</p>
+
       <SectionTitle>Celebrations</SectionTitle>
       {events.length === 0 ? (
         <p className="rounded-3xl border border-dashed border-white/15 p-6 text-center text-small text-white/70">
-          No celebrations yet. Creating events comes in the next step.
+          No celebrations yet. Add the first one above.
         </p>
       ) : (
         <div className="space-y-3">{events.map((e) => <EventCard key={e.id} e={e} />)}</div>

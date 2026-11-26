@@ -14,6 +14,19 @@ const reasons = {
   "used-up": "This invite link has been used too many times. Ask for a new one.",
 } as const;
 
+/** Anyone who joins through an invite can start their own community too (e.g. for their spouse's family). */
+function OwnCommunityNudge() {
+  return (
+    <div className="mt-4 rounded-2xl border border-white/10 p-4 text-left" data-testid="own-community-nudge">
+      <p className="font-display text-small font-bold">Have your own side of the family?</p>
+      <p className="mt-1 text-tiny text-white/70">Start a private community for them too. You&apos;ll be its owner.</p>
+      <Link href="/communities/new/" className="mt-3 inline-flex min-h-11 items-center rounded-full border border-white/25 px-4 text-small font-semibold">
+        + Create my own community
+      </Link>
+    </div>
+  );
+}
+
 function Join({ code }: { code: string }) {
   const d = useDemo();
   const check = d.checkInvite(code);
@@ -23,7 +36,8 @@ function Join({ code }: { code: string }) {
       <Glows variant="soft" />
       <div className="relative w-full max-w-sm">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/dilo-logo.png" alt="DILO" width={666} height={705} className="mx-auto h-auto w-16" />
+        <img src="/brand/dilo-logo.png" alt="DILO" width={666} height={705} className="mx-auto h-auto w-24" />
+        <p className="mt-4 text-center font-display text-body font-semibold text-white/90">Together, We Make Dreams Come True.</p>
         {!check.ok ? (
           <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-center" data-testid="invite-invalid">
             <Icon name="lock" className="mx-auto h-8 w-8 text-orange" />
@@ -54,7 +68,10 @@ function Join({ code }: { code: string }) {
                   You&apos;re already a member · Open
                 </Link>
               ) : d.hasRequested(check.community.id) ? (
-                <p role="status" className="mt-6 rounded-2xl bg-white/[0.06] px-4 py-3 text-small">Request sent. Waiting for approval.</p>
+                <>
+                  <p role="status" className="mt-6 rounded-2xl bg-white/[0.06] px-4 py-3 text-small">Request sent. Waiting for approval.</p>
+                  <OwnCommunityNudge />
+                </>
               ) : (
                 <button
                   type="button"
