@@ -8,7 +8,7 @@ Status: **Phase 1 prototype**, demo data only. No real accounts, no database, no
 The `preview/` folder holds the ready-built site, so the phone never compiles anything.
 
 ```
-cd ~/dilo && git pull
+cd ~/Dilo && git pull
 node scripts/serve.mjs preview
 ```
 Then open http://localhost:8080 in Chrome. Stop with Ctrl+C.

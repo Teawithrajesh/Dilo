@@ -4,10 +4,12 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
     name: "DILO",
     short_name: "DILO",
     description: "Together, We Make Dreams Come True.",
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#f7f5fb",
     theme_color: "#0a1440",

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DemoBanner } from "@/components/DemoBanner";
+import { RegisterSW } from "@/components/RegisterSW";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="min-h-dvh antialiased">
         <DemoBanner />
+        <RegisterSW />
         {children}
       </body>
     </html>
