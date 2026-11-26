@@ -26,3 +26,5 @@ Built (demo data, this browser tab only):
 | Event page with forms open: no side-scroll, 44 px targets | Pass |
 
 Found and fixed while testing: the "Add wish" form stayed open after adding.
+
+**Step 6 complete.** Approved by the founder on 26 Nov 2026 ("Step 6 OK").
