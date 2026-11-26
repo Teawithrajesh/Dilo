@@ -15,3 +15,7 @@
 ## 4. आपने क्या सीखा?
 - सुंदर रंग हमेशा पढ़ने लायक नहीं होते: orange पर सफ़ेद text सिर्फ़ 2.3:1 है, इसलिए button पर navy text रखा।
 - **Maskable icon** = Android icon को गोल/चौकोर काटता है, इसलिए ज़रूरी चीज़ें बीच के 80% हिस्से में रखते हैं।
+
+## Badlav (Revision 1)
+आपने कहा "एक decent logo चाहिए"। इसलिए अब आपकी concept image से ही असली logo काटा गया और उसका background हटाया गया (इसे **matting** कहते हैं: हर pixel के लिए तय करना कि वह logo है या background)।
+सीख: पहले owner को **एक** चीज़ दिखाओ, फिर ज़रूरत हो तो बाकी versions बनाओ।

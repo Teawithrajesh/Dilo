@@ -2,17 +2,6 @@ import tokens from "@/brand/tokens.json";
 
 export const metadata = { title: "DILO · Brand guide" };
 
-const logos = [
-  { file: "logo-primary-light.svg", label: "Primary logo", dark: false },
-  { file: "logo-primary-dark.svg", label: "Primary logo · dark", dark: true },
-  { file: "logo-horizontal-light.svg", label: "Horizontal logo", dark: false },
-  { file: "logo-horizontal-dark.svg", label: "Horizontal logo · dark", dark: true },
-  { file: "symbol.svg", label: "Symbol", dark: false },
-  { file: "app-icon.svg", label: "App icon", dark: false },
-  { file: "logo-horizontal-mono-black.svg", label: "Monochrome black", dark: false },
-  { file: "logo-horizontal-mono-white.svg", label: "Monochrome white", dark: true },
-];
-
 const swatches: { key: keyof typeof tokens.colors; name: string; use: string }[] = [
   { key: "navy", name: "Navy", use: "Wordmark, text, dark backgrounds" },
   { key: "pink", name: "Pink", use: "Symbol, large accents" },
@@ -30,18 +19,18 @@ export default function BrandPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="text-display font-extrabold">DILO brand guide</h1>
-      <p className="mt-2 text-slate">Reproduced from the founder&apos;s concept. Phase 1 · Step 2.</p>
+      <p className="mt-2 text-slate">Taken directly from the founder&apos;s concept. Phase 1 · Step 2.</p>
 
-      <h2 className="mt-10 text-title font-bold">Logos</h2>
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {logos.map((l) => (
-          <figure key={l.file} className={`rounded-2xl p-6 shadow-sm ${l.dark ? "bg-navy text-white" : "bg-white"}`}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/brand/${l.file}`} alt={l.label} className="mx-auto h-28 w-auto max-w-full" />
-            <figcaption className="mt-3 text-center text-small font-semibold">{l.label}</figcaption>
-          </figure>
-        ))}
-      </div>
+      <h2 className="mt-10 text-title font-bold">Logo</h2>
+      <figure className="mt-4 rounded-2xl bg-white p-6 shadow-sm">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/dilo-logo.png" alt="DILO — Together, We Make Dreams Come True." width={865} height={268} className="mx-auto h-auto w-full max-w-md" />
+      </figure>
+      <figure className="mt-4 flex items-center gap-4 rounded-2xl bg-white p-6 shadow-sm">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/icons/icon-192.png" alt="DILO app icon" width={96} height={96} className="h-24 w-24 rounded-3xl" />
+        <figcaption className="text-small text-slate">App icon on your phone&apos;s home screen.</figcaption>
+      </figure>
 
       <h2 className="mt-10 text-title font-bold">Colours</h2>
       <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -78,8 +67,8 @@ export default function BrandPage() {
 
       <h2 className="mt-10 text-title font-bold">Rules</h2>
       <ul className="mt-4 list-disc space-y-1 pl-6">
-        <li>Clear space around the logo equals the height of one person-dot.</li>
-        <li>Minimum size: symbol 24 px, horizontal logo 96 px wide.</li>
+        <li>Use the logo on white or light backgrounds only.</li>
+        <li>Show it at least 160 px wide so the tagline stays readable.</li>
         <li>Never stretch, recolour outside the palette, add shadows, or place on busy photos without a solid backing.</li>
         <li>White text never goes on orange or bright pink (too little contrast). Use navy on orange, white on pink-deep.</li>
       </ul>
