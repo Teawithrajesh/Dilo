@@ -2,29 +2,27 @@ import Link from "next/link";
 import { Glows } from "@/components/landing/Glows";
 import { GhostButton, PrimaryButton } from "@/components/landing/Buttons";
 import { Icon, type IconName } from "@/components/Icon";
+import { CelebrationIcon } from "@/components/celebrate/Decor";
+import { celebrations } from "@/lib/celebrations";
 
 export const metadata = { title: "DILO · Together, We Make Dreams Come True" };
 
 const nav = [
   { href: "#how", label: "How it works" },
-  { href: "#examples", label: "Examples" },
+  { href: "#celebrations", label: "Celebrations" },
   { href: "#trust", label: "Trust" },
   { href: "#faq", label: "FAQ" },
 ];
 
 const steps: { icon: IconName; title: string; text: string }[] = [
-  { icon: "dream", title: "Dream", text: "Create an event for a wedding, a birthday, a laptop for college or a family trip." },
+  { icon: "dream", title: "Dream", text: "Choose a birthday, engagement, wedding or anniversary, and add the dream." },
   { icon: "share", title: "Share", text: "Invite family and friends with a private link. You approve who joins." },
   { icon: "support", title: "Support", text: "Add a wishlist. People record what they gave, openly or anonymously." },
   { icon: "celebrate", title: "Celebrate", text: "Watch the goal fill up together, and celebrate when the dream comes true." },
 ];
 
-// Sample events (invented, shown as examples only).
-const examples = [
-  { tag: "Wedding", title: "Anjali's Wedding", date: "14 Feb 2027", goal: 150000, raised: 108000, people: 23, accent: "from-pink to-orange" },
-  { tag: "Education", title: "Rohan's College Laptop", date: "1 Jul 2027", goal: 65000, raised: 41600, people: 11, accent: "from-violet to-pink" },
-  { tag: "Family trip", title: "Sharma Family Goa Trip", date: "20 Dec 2027", goal: 90000, raised: 27000, people: 8, accent: "from-orange to-gold" },
-];
+// Sample event for the hero card (invented).
+const sample = { tag: "Wedding", title: "Anjali's Wedding", date: "14 Feb 2027", goal: 150000, raised: 108000, people: 23, accent: "from-pink to-orange" };
 
 const compare = [
   { old: "Messages get lost in a busy group chat", dilo: "One page per event with the wishlist and progress" },
@@ -41,9 +39,9 @@ const trust: { icon: IconName; title: string; text: string }[] = [
 ];
 
 const audiences: { icon: IconName; title: string; text: string }[] = [
-  { icon: "home", title: "Families", text: "Weddings, birthdays, a new home, a parent's dream." },
-  { icon: "users", title: "Friends", text: "Farewells, group gifts, a trip you've talked about for years." },
-  { icon: "globe", title: "Communities", text: "Housing societies, alumni groups, clubs and teams." },
+  { icon: "home", title: "Families", text: "Birthdays, engagements, weddings and anniversaries." },
+  { icon: "users", title: "Friends", text: "Surprise birthdays and group gifts for the people you love." },
+  { icon: "globe", title: "Communities", text: "Housing societies, alumni groups, clubs and teams celebrating their members." },
 ];
 
 const faqs = [
@@ -75,7 +73,7 @@ function Progress({ value, accent }: { value: number; accent: string }) {
 }
 
 function HeroCard() {
-  const e = examples[0];
+  const e = sample;
   const pct = Math.round((e.raised / e.goal) * 100);
   return (
     <div className="relative mx-auto w-full max-w-xs rotate-[-2deg] rounded-[2rem] border border-white/10 bg-white/[0.06] p-5 text-left shadow-2xl backdrop-blur">
@@ -168,27 +166,23 @@ export default function Welcome() {
           </ol>
         </section>
 
-        {/* 4. Examples */}
-        <section id="examples" className="scroll-mt-28 border-t border-white/10 px-4 py-20">
-          <SectionHeading eyebrow="Examples" title="Dreams people celebrate on DILO" text="Sample events, to show how it looks." />
-          <div className="mx-auto mt-12 grid max-w-6xl gap-4 md:grid-cols-3">
-            {examples.map((e) => {
-              const pct = Math.round((e.raised / e.goal) * 100);
-              return (
-                <article key={e.title} className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04]">
-                  <div className={`h-24 bg-gradient-to-br ${e.accent} opacity-80`} />
-                  <div className="p-6">
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-tiny font-semibold">{e.tag}</span>
-                    <h3 className="mt-4 text-heading font-bold">{e.title}</h3>
-                    <p className="text-small text-white/60">{e.date} · {e.people} people</p>
-                    <div className="mt-5"><Progress value={pct} accent={e.accent} /></div>
-                    <p className="mt-2 text-small text-white/70">
-                      <span className="font-bold text-white">{pct}%</span> · {inr(e.raised)} of {inr(e.goal)}
-                    </p>
-                  </div>
-                </article>
-              );
-            })}
+        {/* 4. Celebrations */}
+        <section id="celebrations" className="scroll-mt-28 border-t border-white/10 px-4 py-20">
+          <SectionHeading eyebrow="Celebrations" title="What are you celebrating?" text="Pick one to add the photo, invitation, dream and budget." />
+          <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
+            {celebrations.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/celebrate/${c.slug}/`}
+                className="group relative flex aspect-square flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-white/25 hover:bg-white/[0.07] active:scale-[0.98]"
+              >
+                <span className={`absolute inset-x-6 top-6 h-20 rounded-full bg-gradient-to-r ${c.accent} opacity-20 blur-2xl transition group-hover:opacity-35`} aria-hidden />
+                <span className={`relative grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br ${c.accent} text-navy shadow-lg`}>
+                  <CelebrationIcon slug={c.slug} className="h-10 w-10" />
+                </span>
+                <span className="relative font-display text-body font-bold">{c.title}</span>
+              </Link>
+            ))}
           </div>
         </section>
 
