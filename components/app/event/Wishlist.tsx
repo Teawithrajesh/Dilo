@@ -126,7 +126,7 @@ export function Wishlist({ eventId, c }: { eventId: string; c: Celebration }) {
       {org && (
         <div className="mt-4">
           {adding ? (
-            <WishForm submitLabel="Add wish" onCancel={() => setAdding(false)} onSave={(v) => d.addWish(eventId, v)} />
+            <WishForm submitLabel="Add wish" onCancel={() => setAdding(false)} onSave={(v) => { const r = d.addWish(eventId, v); if (r.ok) setAdding(false); return r.ok ? { ok: true } : { ok: false, error: r.error }; }} />
           ) : (
             <button type="button" onClick={() => setAdding(true)} className={`${chip} w-full border border-dashed border-white/30`}>+ Add a wish</button>
           )}
