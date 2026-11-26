@@ -1,9 +1,9 @@
-// Shown on every screen of the Phase 1 prototype (acceptance check: "Honesty").
+// Shown on every screen of the Phase 1 prototype (acceptance check: "Honesty"). Kept quiet so it doesn't fight the design.
 export function DemoBanner() {
   return (
     <div
       role="status"
-      className="sticky top-0 z-50 bg-navy px-4 py-2 text-center text-sm font-bold tracking-wide text-white"
+      className="sticky top-0 z-50 flex h-8 items-center justify-center bg-navy text-tiny font-semibold tracking-wide text-white/80"
     >
       DEMO DATA · Prototype only, nothing is saved
     </div>

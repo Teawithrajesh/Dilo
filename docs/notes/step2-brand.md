@@ -31,3 +31,18 @@ Founder feedback: "Itne logo nahi chahiye… ek decent logo chahiye." Chosen opt
 | Logo + icon load, no failed requests, no console errors | Pass |
 | No horizontal scroll; tap targets ≥ 44 px | Pass |
 | Chromium installability errors | None |
+
+## Revision 2 (26 Nov 2026): the app icon is the brand logo; premium splash
+Founder feedback: keep the app-icon design as the only brand logo, don't make it look like a button, make the app look premium.
+- `public/brand/dilo-logo.png`: the app-icon design (symbol + white "DILO") on a transparent background, so it sits on the navy page without a box.
+- Home: full-screen navy splash with soft glows from the logo colours, logo, tagline, "Dream · Share · Support · Celebrate". Removed the brand-guide button, the step card and the `/brand/` page.
+- DEMO DATA banner kept on every screen (acceptance check) but quieter: 32 px, small text.
+- Manifest background is navy, so the Android splash matches.
+
+| Re-check (Pixel 7 emulation) | Result |
+|---|---|
+| Build | Pass |
+| Contrast | 16/16 pass |
+| Logo loads, no failed requests, no console errors | Pass |
+| No horizontal or vertical scroll on the splash | Pass |
+| Chromium installability errors | None |

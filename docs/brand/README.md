@@ -3,7 +3,10 @@
 `reference-concept.png` is the founder-approved logo concept (supplied 26 Nov 2026).
 Phase 1 Step 2 reproduces it faithfully as clean SVGs. No new direction.
 
-## Built in Step 2 (revised)
+## Final logo (Revision 2)
+The brand logo is the **app-icon design**: concept symbol above a white "DILO" (Plus Jakarta Sans 800). In the app it is `public/brand/dilo-logo.png` on a transparent background, used on navy. On the home screen it is the navy-square icon in `public/icons/`.
+
+## Built in Step 2 (revision 1, superseded)
 The founder asked for **one** logo, exactly as in the concept. So the logo is cut directly from `reference-concept.png` with its background removed:
 - `public/brand/dilo-logo.png` (865 × 268) — the only logo. Use on white or light backgrounds.
 - `public/brand/dilo-symbol.png` — symbol only, used for favicons.
