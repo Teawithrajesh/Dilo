@@ -1,8 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { DemoBanner } from "@/components/DemoBanner";
 import { RegisterSW } from "@/components/RegisterSW";
+import { DemoProvider } from "@/lib/demo/store";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/plus-jakarta-sans";
+import "@fontsource/cormorant-garamond/500.css";
+import "@fontsource/cormorant-garamond/500-italic.css";
+import "@fontsource/cormorant-garamond/600.css";
+import "@fontsource/cormorant-garamond/600-italic.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-dvh bg-navy antialiased">
         <DemoBanner />
         <RegisterSW />
-        {children}
+        <DemoProvider>{children}</DemoProvider>
       </body>
     </html>
   );
