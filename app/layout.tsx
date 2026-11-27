@@ -15,7 +15,7 @@ const SLOGAN = "Together, We Make Dreams Come True.";
 // Link previews (WhatsApp, Facebook, X): DILO image + slogan.
 // Set NEXT_PUBLIC_SITE_URL to the real address once DILO is hosted; previews need a public address.
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:8080"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://dilowish.com"),
   title: "DILO",
   description: SLOGAN,
   manifest: "/manifest.webmanifest",
