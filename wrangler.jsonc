@@ -1,11 +1,12 @@
-// Cloudflare Workers config: serves the ready-built site in ./preview (no build step needed).
+// Cloudflare Workers config: serves the ready-built live site in ./site (no build step needed).
+// ./site is built with the public Supabase settings; ./preview (for the phone) is not.
 // The Worker name must match the project name chosen in the Cloudflare dashboard.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "dilowish",
   "compatibility_date": "2026-11-01",
   "assets": {
-    "directory": "./preview",
+    "directory": "./site",
     "not_found_handling": "404-page"
   }
 }

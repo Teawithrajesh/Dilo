@@ -1,0 +1,5 @@
+{
+  "_note": "PUBLIC values for the live website only (dilowish.com). The publishable key is designed to be used in browsers; the database allows visitors to INSERT into feedback/early_access only (see supabase/migrations). Never put the secret/service key here.",
+  "url": "https://ieaczkseiggwyaetjcdd.supabase.co",
+  "publishableKey": "sb_publishable_vVb3GhXWyUNX1qbNSJjFgA_TEVubcUW"
+}
