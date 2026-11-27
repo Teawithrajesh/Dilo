@@ -74,6 +74,7 @@ Founder's idea: when DILO reaches **1 lakh**, **10 lakh (1 million)** and **1 cr
 5. **DILO buys the wish item or service directly** (not cash to the winner), with a fixed budget cap approved in the cost register.
 
 ### 4b. Daily points and a 7-day streak
+> **Update 27 Nov 2026:** built in the prototype as **✨ Daily Sparkles** (collect once a day, 7-day ladder 10→100). What Sparkles can be used for is still open. See `docs/notes/daily-sparkles.md`.
 Founder's idea: points for being active every day, counted weekly.
 
 **Will it work?** It brings people back, but points for *just opening the app* attract empty visits. Better:

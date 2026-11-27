@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
 import { DreamsSpotlight } from "@/components/app/DreamsSpotlight";
+import { SparklesCard } from "@/components/app/SparklesCard";
 import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
 import { EventCard, SectionTitle } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
@@ -15,6 +16,8 @@ export default function Home() {
     <AppShell title="Home">
       <p className="text-white/70">Namaste,</p>
       <p className="font-display text-title font-extrabold">{me?.short} 👋</p>
+
+      {!d_isAdmin && <SparklesCard />}
 
       <DreamsSpotlight />
 
