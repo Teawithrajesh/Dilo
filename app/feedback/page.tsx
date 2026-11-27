@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Glows } from "@/components/landing/Glows";
 import { Icon } from "@/components/Icon";
 import { useDemo } from "@/lib/demo/store";
@@ -23,11 +23,15 @@ export default function FeedbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => { if (ready && me) setName(me.name); }, [ready, me]);
+  const sending = useRef(false); // stops a double-tap from saving twice
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (sending.current) return; // a second tap of the same send
     const r = saveFeedback({ rating, kind, message, name: anonymous ? undefined : name, contact: anonymous ? undefined : contact });
-    if (!r.ok) return setError(r.error);
+    if (!r.ok) return setError(r.error); // nothing saved: they can fix it and send again right away
+    sending.current = true;
+    window.setTimeout(() => { sending.current = false; }, 1000);
     setError(null);
     setSent(true);
   }

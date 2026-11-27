@@ -25,11 +25,31 @@ function seed(personId: string): SparkleState {
   return { balance: 1240, streak: 3, last: day(1), history: [{ day: day(1), amount: 30, step: 3 }, { day: day(2), amount: 20, step: 2 }, { day: day(3), amount: 10, step: 1 }] };
 }
 
+const isDay = (v: unknown): v is string => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(new Date(v + "T00:00:00").getTime());
+const wholeAtLeast0 = (v: unknown) => (typeof v === "number" && Number.isFinite(v) && v >= 0 ? Math.floor(v) : 0);
+
+/** Never trust what's stored: a damaged or old value must not break the page. */
+function clean(v: unknown): SparkleState | null {
+  if (!v || typeof v !== "object") return null;
+  const o = v as Record<string, unknown>;
+  const streak = wholeAtLeast0(o.streak);
+  const history = Array.isArray(o.history)
+    ? o.history
+        .filter((h): h is { day: string; amount: number; step: number } => !!h && typeof h === "object" && isDay((h as { day?: unknown }).day))
+        .map((h) => ({ day: h.day, amount: wholeAtLeast0(h.amount), step: Math.min(7, Math.max(1, wholeAtLeast0(h.step) || 1)) }))
+        .slice(0, 60)
+    : [];
+  return { balance: wholeAtLeast0(o.balance), streak: streak >= 1 && streak <= 7 ? streak : 0, last: isDay(o.last) ? o.last : null, history };
+}
+
 export function loadSparkles(personId: string): SparkleState {
   try {
     const raw = localStorage.getItem(key(personId));
-    if (raw) return JSON.parse(raw) as SparkleState;
-  } catch { /* ignore */ }
+    if (raw) {
+      const c = clean(JSON.parse(raw));
+      if (c) return c;
+    }
+  } catch { /* damaged or blocked storage: fall back below */ }
   return seed(personId);
 }
 

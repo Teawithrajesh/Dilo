@@ -2,7 +2,7 @@
 
 // In-browser demo state. Nothing is sent anywhere. A page refresh resets everything
 // except which demo person you picked (kept for this browser tab only).
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as seed from "./data";
 import type { Activity, Community, CommunityType, Contribution, DemoEvent, InviteLink, Membership, ModerationAction, Notice, Person, PersonId, Priority, Report, ReportReason, ReportTarget, Role, Wish } from "./data";
 import type { CelebrationSlug } from "@/lib/celebrations";
@@ -127,6 +127,20 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [suspended, setSuspendedList] = useState<string[]>([]);
   const [actions, setActions] = useState<ModerationAction[]>([]);
 
+  // A double-tap on a phone fires the same action twice before the screen updates.
+  // The same action with the same details within 1 second runs once and returns the first result.
+  const recent = useRef(new Map<string, { t: number; r: unknown }>());
+  const once = useCallback(<T,>(key: string, fn: () => T): T => {
+    const now = Date.now();
+    const prev = recent.current.get(key);
+    if (prev && now - prev.t < 1000) return prev.r as T;
+    const r = fn();
+    // Remember only actions that worked, so a corrected retry is never blocked.
+    const failed = !!r && typeof r === "object" && (r as unknown as { ok?: boolean }).ok === false;
+    if (!failed) recent.current.set(key, { t: now, r });
+    return r;
+  }, []);
+
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(SESSION_KEY) as PersonId | null;
@@ -249,12 +263,12 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       myNotices,
       unread: myNotices.filter((n) => !n.read).length,
 
-      createCommunity: ({ name, type, description, gradient, coverImage, photo }) => {
+      createCommunity: ({ name, type, description, gradient, coverImage, photo }) => once(`createCommunity:${meId}:${name.trim()}`, () => {
         const id = slugify(name);
         setCommunities((c) => [...c, { id, name: name.trim(), type, description: description.trim(), gradient, coverImage, photo }]);
         if (meId) setMemberships((m) => [...m, { communityId: id, personId: meId, role: "owner" }]);
         return id;
-      },
+      }),
 
       setCommunityImages: (cid, images) => {
         if (!can.editCommunity(roleIn(cid))) return { ok: false, error: "Only owners and admins can change the photos." };
@@ -262,7 +276,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         return { ok: true };
       },
 
-      createEvent: ({ communityId, kind, title, date, goal, dream, photo, invitation }) => {
+      createEvent: ({ communityId, kind, title, date, goal, dream, photo, invitation }) => once(`createEvent:${meId}:${communityId}:${title.trim()}:${date}`, () => {
         if (!meId || !can.createEvent(roleIn(communityId))) return { ok: false, error: "Join this community before adding a celebration." };
         const id = slugify(title);
         setEvents((e) => [...e, { id, communityId, kind, title: title.trim(), date, goal, recorded: 0, wishes: 0, dream: dream.trim(), createdBy: meId, photo, invitation }]);
@@ -272,24 +286,24 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         notify(others, `${person(meId).short} added a new celebration in ${community(communityId)?.name}: ${title.trim()} on ${when}.`);
         log(communityId, `${person(meId).short} created ${title.trim()}.`, id);
         return { ok: true, id };
-      },
+      }),
 
       setEventImages: (eventId, images) => {
         setEvents((e) => e.map((x) => (x.id === eventId && roleIn(x.communityId) !== null ? { ...x, ...images } : x)));
       },
 
-      createInvite: (cid) => {
+      createInvite: (cid) => once(`createInvite:${meId}:${cid}`, () => {
         if (!meId || !can.invite(roleIn(cid))) return null;
         const link: InviteLink = { code: randomCode(), communityId: cid, createdBy: meId, expiresAt: Date.now() + INVITE_DAYS * 86_400_000, revoked: false, maxUses: 20, uses: 0 };
         setLinks((l) => [link, ...l]);
         return link;
-      },
+      }),
 
       revokeInvite: (code) => {
         setLinks((l) => l.map((x) => (x.code === code && can.invite(roleIn(x.communityId)) ? { ...x, revoked: true } : x)));
       },
 
-      requestToJoin: (cid, viaCode) => {
+      requestToJoin: (cid, viaCode) => once(`requestToJoin:${meId}:${cid}`, () => {
         if (!meId || roleIn(cid) !== null) return;
         if (requests.some((r) => r.communityId === cid && r.personId === meId)) return;
         if (viaCode) {
@@ -301,16 +315,16 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         const name = community(cid)?.name ?? "the community";
         notify([meId], `Your request to join ${name} was sent. An admin will review it.`);
         notify(approversOf(cid), `${person(meId).name} asked to join ${name}.`);
-      },
+      }),
 
-      decide: (cid, pid, approve) => {
+      decide: (cid, pid, approve) => once(`decide:${cid}:${pid}`, () => {
         if (!can.approveMembers(roleIn(cid))) return { ok: false, error: "Only owners, admins and moderators can do this." };
         if (!requests.some((r) => r.communityId === cid && r.personId === pid)) return { ok: false, error: "That request is no longer waiting." };
         setRequests((r) => r.filter((x) => !(x.communityId === cid && x.personId === pid)));
         const name = community(cid)?.name ?? "the community";
         if (approve) {
           const existing = memberships.filter((m) => m.communityId === cid && m.personId !== meId).map((m) => m.personId);
-          setMemberships((m) => [...m, { communityId: cid, personId: pid, role: "member" }]);
+          setMemberships((m) => (m.some((x) => x.communityId === cid && x.personId === pid) ? m : [...m, { communityId: cid, personId: pid, role: "member" }]));
           notify([pid], `Welcome! You are now a member of ${name}.`);
           notify(existing, `${person(pid).name} joined ${name}.`);
           log(cid, `${person(pid).name} joined the community.`);
@@ -318,17 +332,17 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
           notify([pid], `Your request to join ${name} was not approved.`);
         }
         return { ok: true };
-      },
+      }),
 
-      setRole: (cid, pid, role) => {
+      setRole: (cid, pid, role) => once(`setRole:${cid}:${pid}:${role}`, () => {
         const target = roleOf(cid, pid);
         if (!target || !can.changeRole(roleIn(cid), target) || role === "owner") return { ok: false, error: "You can't change this person's role." };
         setMemberships((m) => m.map((x) => (x.communityId === cid && x.personId === pid ? { ...x, role } : x)));
         notify([pid], `You are now a ${role} in ${community(cid)?.name}.`);
         return { ok: true };
-      },
+      }),
 
-      removeMember: (cid, pid) => {
+      removeMember: (cid, pid) => once(`removeMember:${cid}:${pid}`, () => {
         const target = roleOf(cid, pid);
         const rule = lastOwnerRule(cid, pid, false);
         if (rule) return { ok: false, error: rule };
@@ -336,7 +350,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         setMemberships((m) => m.filter((x) => !(x.communityId === cid && x.personId === pid)));
         notify([pid], `You were removed from ${community(cid)?.name}.`);
         return { ok: true };
-      },
+      }),
 
       leave: (cid) => {
         if (!meId) return { ok: false, error: "Not signed in." };
@@ -351,7 +365,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       isOrganiser,
       wishesFor: (eid) => wishes.filter((w) => w.eventId === eid).sort((a, b) => a.position - b.position),
 
-      addWish: (eid, w) => {
+      addWish: (eid, w) => once(`addWish:${eid}:${w.title.trim()}:${w.cost}`, () => {
         if (!isOrganiser(eid)) return { ok: false, error: "Only the organiser can add wishes." };
         if (!w.title.trim()) return { ok: false, error: "Please name the wish." };
         if (!Number.isInteger(w.cost) || w.cost <= 0) return { ok: false, error: "Please enter the cost in whole rupees." };
@@ -360,7 +374,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         const e = findEvent(eid)!;
         log(e.communityId, `${person(meId!).short} added a wish to ${e.title}: ${w.title.trim()}.`, eid);
         return { ok: true };
-      },
+      }),
 
       updateWish: (wid, patch) => {
         const w = wishes.find((x) => x.id === wid);
@@ -382,7 +396,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         setWishes((list) => list.map((x) => (x.id === a.id ? { ...x, position: b.position } : x.id === b.id ? { ...x, position: a.position } : x)));
       },
 
-      toggleFulfilled: (wid) => {
+      toggleFulfilled: (wid) => once(`toggleFulfilled:${wid}`, () => {
         const w = wishes.find((x) => x.id === wid);
         if (!w || !isOrganiser(w.eventId)) return;
         setWishes((list) => list.map((x) => (x.id === wid ? { ...x, fulfilled: !x.fulfilled, fulfilledAt: x.fulfilled ? undefined : Date.now() } : x)));
@@ -390,7 +404,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
           const e = findEvent(w.eventId)!;
           log(e.communityId, `${w.title} is now covered for ${e.title}. 🎉`, e.id);
         }
-      },
+      }),
 
       contributionsFor: (eid) => {
         const e = findEvent(eid);
@@ -409,7 +423,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
           .filter(() => !!e);
       },
 
-      recordContribution: (eid, c) => {
+      recordContribution: (eid, c) => once(`record:${meId}:${eid}:${c.amount}:${c.message ?? ""}`, () => {
         const e = findEvent(eid);
         if (!e || !meId || roleIn(e.communityId) === null) return { ok: false, error: "Only members can record a contribution." };
         if (!Number.isInteger(c.amount) || c.amount <= 0) return { ok: false, error: "Please enter the amount in whole rupees." };
@@ -426,16 +440,16 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
           log(e.communityId, `🎉 ${e.title} reached its goal!`, eid);
         }
         return { ok: true };
-      },
+      }),
 
-      confirmContribution: (id) => {
+      confirmContribution: (id) => once(`confirm:${id}`, () => {
         const c = contribs.find((x) => x.id === id);
         if (!c || !isOrganiser(c.eventId)) return { ok: false, error: "Only the organiser can confirm." };
         setContribs((list) => list.map((x) => (x.id === id ? { ...x, status: "confirmed" } : x)));
         const e = findEvent(c.eventId)!;
         if (c.personId !== "sample") notify([c.personId], `${person(meId!).short} confirmed your contribution to ${e.title}. Thank you!`);
         return { ok: true };
-      },
+      }),
 
       removeContribution: (id) => {
         const c = contribs.find((x) => x.id === id);
@@ -494,17 +508,17 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       block: (id) => { if (meId && id !== meId) setBlocks((b) => (b.some((x) => x.by === meId && x.who === id) ? b : [...b, { by: meId, who: id }])); },
       unblock: (id) => setBlocks((b) => b.filter((x) => !(x.by === meId && x.who === id))),
 
-      report: ({ communityId, target, summary, reason, note }) => {
+      report: ({ communityId, target, summary, reason, note }) => once(`report:${meId}:${JSON.stringify(target)}`, () => {
         if (!meId || roleIn(communityId) === null) return { ok: false, error: "Only members can report." };
         const r: Report = { id: `r-${Date.now()}`, communityId, reporterId: meId, target, summary, reason, note: note?.trim() || undefined, status: "open", when: "Just now" };
         setReports((list) => [r, ...list]);
         notify(approversOf(communityId).filter((p) => p !== meId), `New report in ${community(communityId)?.name}: ${summary}. Please review.`);
         return { ok: true };
-      },
+      }),
       reportsFor: (cid) => (can.approveMembers(roleIn(cid)) ? reports.filter((r) => r.communityId === cid) : []),
       moderatedCommunities: communities.filter((c) => can.approveMembers(roleIn(c.id))),
 
-      moderate: (reportId, action) => {
+      moderate: (reportId, action) => once(`moderate:${reportId}`, () => {
         const r = reports.find((x) => x.id === reportId);
         if (!r || !meId) return { ok: false, error: "Report not found." };
         if (!can.approveMembers(roleIn(r.communityId))) return { ok: false, error: "Only owners, admins and moderators can act on reports." };
@@ -522,7 +536,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         setActions((a) => [{ id: `m-${Date.now()}`, reportId, byId: meId, action: action === "remove" ? "removed" : "dismissed", when: "Just now" }, ...a]);
         notify([r.reporterId], action === "remove" ? "Thanks for your report. The content was removed." : "Thanks for your report. A moderator reviewed it and left it up.");
         return { ok: true };
-      },
+      }),
       isSuspended: (cid) => suspended.includes(cid),
 
       isPlatformAdmin: !!me?.platformAdmin,
@@ -547,7 +561,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       },
       actions,
     };
-  }, [ready, meId, communities, memberships, links, requests, notices, events, wishes, contribs, activity, profiles, anonDefault, blocks, reports, suspended, actions, signIn, signOut]);
+  }, [ready, meId, communities, memberships, links, requests, notices, events, wishes, contribs, activity, profiles, anonDefault, blocks, reports, suspended, actions, signIn, signOut, once]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

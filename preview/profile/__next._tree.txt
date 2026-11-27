@@ -1,5 +1,6 @@
 :HL["/_next/static/chunks/42yngyayznhb5.css","style"]
 :HC["/",""]
+:HL["/brand/dilo-logo.png","image"]
 2:[["children",{"s":"__PAGE__","h":160}]]
 1:[["children",{"s":"profile","h":96,"c":"$Q2"}]]
-0:{"b":"13ZRkrqMQSynouneEo5su","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"6zR52i4Ml0snpdGrDhgm7","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
