@@ -41,6 +41,8 @@ test("privacy notice explains what, why, where, how long and your rights", async
     await expect(page.getByRole("heading", { name: h })).toBeVisible();
   }
   await expect(page.getByText("Digital Personal Data Protection Act, 2023")).toBeVisible();
+  const mail = page.getByRole("link", { name: "hello@dilowish.com" });
+  await expect(mail).toHaveAttribute("href", "mailto:hello@dilowish.com");
 });
 
 test("the demo is kept out of search engines", async ({ request }) => {

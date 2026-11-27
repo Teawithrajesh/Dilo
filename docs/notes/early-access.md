@@ -4,7 +4,7 @@ Founder chose **B**: put the demo online, let people join an early-access list (
 
 ## Built
 - **`/early-access/`**: email (required, validated, max 254), name and city (optional), consent tick box (18+, purpose, can delete any time, link to the notice). Thank-you screen; "already on the list" for a repeat email (case-insensitive). Double-tap safe.
-- **`/privacy/`**: plain-language notice (what, why, where — Supabase Singapore, who — founder only, how long, your rights under India's DPDP Act 2023, 18+). Contact shows the feedback form until the founder chooses an email to publish (`NEXT_PUBLIC_CONTACT_EMAIL`). To be reviewed by a lawyer before real accounts.
+- **`/privacy/`**: plain-language notice (what, why, where — Supabase Singapore, who — founder only, how long, your rights under India's DPDP Act 2023, 18+). Contact: **hello@dilowish.com** (Cloudflare Email Routing → the founder’s DILO-only Gmail, which is never shown on the site; override with `NEXT_PUBLIC_CONTACT_EMAIL`). To be reviewed by a lawyer before real accounts.
 - Entry points: landing final section ("Get early access" + "Try the demo"), footer (Early access · Privacy), sign-in page ("Want your own real account?").
 - **Feedback + early access go to Supabase when configured** (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`); otherwise they stay on the device (as before).
 - **Database (not applied yet — needs approval)**: `supabase/migrations/0001_feedback_and_early_access.sql` — two tables, Row Level Security on, **insert-only** for visitors (no read/update/delete), size and format checks, consent must be true, one entry per email.
