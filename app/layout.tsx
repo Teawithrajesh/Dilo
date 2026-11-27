@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   title: "DILO",
   description: SLOGAN,
   manifest: "/manifest.webmanifest",
+  // Prototype: keep it out of search results.
+  robots: { index: false, follow: false },
   icons: {
     icon: [{ url: "/icons/favicon-48.png", sizes: "48x48", type: "image/png" }],
     apple: "/icons/apple-touch-icon.png",
