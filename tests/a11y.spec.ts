@@ -27,7 +27,7 @@ test("public screens", async ({ page }) => {
 
 test("signed-in screens", async ({ page }) => {
   await signInAsPriya(page);
-  for (const path of ["/home/", "/communities/", "/community/?id=sharma-family", "/community/members/?id=sharma-family", "/community/invite/?id=sharma-family", "/event/?id=anjali-wedding", "/notifications/", "/profile/", "/settings/", "/moderation/", "/communities/new/", "/letter/"]) {
+  for (const path of ["/home/", "/communities/", "/community/?id=sharma-family", "/community/members/?id=sharma-family", "/community/invite/?id=sharma-family", "/event/?id=anjali-wedding", "/notifications/", "/profile/", "/settings/", "/moderation/", "/communities/new/", "/letter/", "/sparkles/"]) {
     await page.goto(path);
     await page.waitForLoadState("networkidle");
     await expect(page.locator("main")).toBeVisible();

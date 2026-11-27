@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useDemo } from "@/lib/demo/store";
 import { Icon, type IconName } from "@/components/Icon";
 import { Avatar } from "./Avatar";
+import { SparklesChip } from "./SparklesCard";
 
 const tabs: { href: string; label: string; icon: IconName }[] = [
   { href: "/home/", label: "Home", icon: "home" },
@@ -37,10 +38,13 @@ export function AppShell({ title, children }: { title: string; children: React.R
             <img src="/brand/dilo-logo.png" alt="" width={666} height={705} className="h-9 w-auto" />
             <h1 className="font-display text-heading font-bold">{title}</h1>
           </div>
+          <div className="flex items-center gap-1">
+          <SparklesChip />
           <Link href="/profile/" className="inline-flex min-h-11 min-w-11 items-center justify-center">
             <Avatar person={me} size="h-9 w-9 text-tiny" />
             <span className="sr-only">Profile, signed in as {me.name}</span>
           </Link>
+          </div>
         </div>
       </header>
 
