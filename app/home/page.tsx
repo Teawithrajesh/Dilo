@@ -103,6 +103,17 @@ export default function Home() {
           ))}
         </div>
       )}
+      <Link
+        href="/feedback/"
+        data-testid="feedback-card"
+        className="mt-8 flex items-center justify-between gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]"
+      >
+        <span>
+          <span className="block font-display font-bold">Help us improve DILO</span>
+          <span className="text-small text-white/70">Share an idea or tell us what didn&apos;t work.</span>
+        </span>
+        <span aria-hidden className="text-[1.6rem]">💬</span>
+      </Link>
     </AppShell>
   );
 }

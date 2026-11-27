@@ -274,6 +274,7 @@ export default function Welcome() {
             {nav.map((n) => (
               <a key={n.href} href={n.href} className="inline-flex min-h-11 items-center hover:text-white">{n.label}</a>
             ))}
+            <Link href="/feedback/" className="inline-flex min-h-11 items-center font-semibold text-white hover:text-white">Feedback</Link>
           </nav>
         </div>
         <p className="mt-8 text-center text-tiny text-white/60">© 2026 DILO · Prototype on demo data</p>

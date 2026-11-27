@@ -18,7 +18,7 @@ async function audit(page: Page, name: string) {
 }
 
 test("public screens", async ({ page }) => {
-  for (const path of ["/", "/welcome/", "/signin/", "/celebrate/wedding/", "/join/?code=SHARMA7Q"]) {
+  for (const path of ["/", "/welcome/", "/signin/", "/celebrate/wedding/", "/join/?code=SHARMA7Q", "/feedback/"]) {
     await page.goto(path);
     await page.waitForLoadState("networkidle");
     await audit(page, path);

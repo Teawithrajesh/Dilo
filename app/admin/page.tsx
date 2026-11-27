@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { clearFeedback, feedbackCsv, kindLabel, readFeedback, type Feedback } from "@/lib/feedback";
 import { AppShell } from "@/components/app/AppShell";
 import { SectionTitle } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
@@ -9,6 +10,19 @@ import { useDemo } from "@/lib/demo/store";
 export default function Admin() {
   const d = useDemo();
   const [msg, setMsg] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback[]>([]);
+  useEffect(() => setFeedback(readFeedback()), []);
+
+  function downloadCsv() {
+    const url = URL.createObjectURL(new Blob([feedbackCsv(feedback)], { type: "text/csv;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "dilo-feedback.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
 
   if (!d.isPlatformAdmin) {
     return (
@@ -56,6 +70,39 @@ export default function Admin() {
           </li>
         ))}
       </ul>
+
+      <SectionTitle>{`Feedback · ${feedback.length}`}</SectionTitle>
+      {feedback.length === 0 ? (
+        <p className="rounded-3xl border border-dashed border-white/15 p-4 text-small text-white/70">No feedback on this phone yet. People can send it from the landing page or their Profile.</p>
+      ) : (
+        <>
+          <ul className="space-y-2">
+            {feedback.map((f) => (
+              <li key={f.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4" data-testid="admin-feedback">
+                <p className="text-tiny font-semibold uppercase tracking-[0.15em] text-white/60">
+                  {kindLabel[f.kind]}
+                  {f.rating ? ` · ${"★".repeat(f.rating)}${"☆".repeat(5 - f.rating)}` : ""}
+                  {` · ${new Date(f.at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}`}
+                </p>
+                <p className="mt-1 whitespace-pre-wrap">{f.message}</p>
+                <p className="mt-1 text-small text-white/60">{f.name ? `${f.name}${f.contact ? ` · ${f.contact}` : ""}` : "Anonymous"}</p>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button type="button" onClick={downloadCsv} className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/25 text-small font-semibold">
+              Download (CSV)
+            </button>
+            <button
+              type="button"
+              onClick={() => { if (window.confirm("Delete all feedback on this phone? Download it first if you need it.")) { clearFeedback(); setFeedback([]); } }}
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#ffb4c4]/40 text-small font-semibold text-[#ffd0da]"
+            >
+              Clear all
+            </button>
+          </div>
+        </>
+      )}
 
       <SectionTitle>Communities</SectionTitle>
       <ul className="divide-y divide-white/10 rounded-3xl border border-white/10 bg-white/[0.04]">

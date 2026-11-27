@@ -101,6 +101,7 @@ export default function Profile() {
       <SectionTitle>Settings</SectionTitle>
       <nav aria-label="Settings" className="divide-y divide-white/10 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04]">
         <Link href="/settings/" className={row}><span>Privacy &amp; safety</span><Icon name="arrow" className="h-5 w-5 text-white/60" /></Link>
+        <Link href="/feedback/" className={row}><span>Send feedback</span><Icon name="arrow" className="h-5 w-5 text-white/60" /></Link>
         {d.moderatedCommunities.length > 0 && (
           <Link href="/moderation/" className={row}><span>Moderation</span><Icon name="arrow" className="h-5 w-5 text-white/60" /></Link>
         )}
