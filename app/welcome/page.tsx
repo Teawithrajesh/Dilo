@@ -256,8 +256,11 @@ export default function Welcome() {
           <Glows variant="soft" />
           <div className="relative mx-auto max-w-xl">
             <h2 className="text-balance text-title font-extrabold sm:text-display">Start your first dream today</h2>
-            <p className="mt-3 text-white/70">It takes less than five minutes to create a private community.</p>
-            <div className="mt-8"><PrimaryButton href="/signin/">Create Your Community</PrimaryButton></div>
+            <p className="mt-3 text-white/70">DILO is opening to its first families soon. Join the list, and try the demo today.</p>
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <PrimaryButton href="/early-access/">Get early access</PrimaryButton>
+              <GhostButton href="/signin/">Try the demo</GhostButton>
+            </div>
           </div>
         </section>
       </main>
@@ -275,6 +278,8 @@ export default function Welcome() {
               <a key={n.href} href={n.href} className="inline-flex min-h-11 items-center hover:text-white">{n.label}</a>
             ))}
             <Link href="/feedback/" className="inline-flex min-h-11 items-center font-semibold text-white hover:text-white">Feedback</Link>
+            <Link href="/early-access/" className="inline-flex min-h-11 items-center hover:text-white">Early access</Link>
+            <Link href="/privacy/" className="inline-flex min-h-11 items-center hover:text-white">Privacy</Link>
           </nav>
         </div>
         <p className="mt-8 text-center text-tiny text-white/60">© 2026 DILO · Prototype on demo data</p>

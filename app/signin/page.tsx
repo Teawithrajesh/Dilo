@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Glows } from "@/components/landing/Glows";
 import { Avatar } from "@/components/app/Avatar";
@@ -53,6 +54,13 @@ export default function SignIn() {
           ))}
         </ul>
         <p className="mt-6 text-center text-tiny text-white/60">Sample people. Refreshing the page resets the demo.</p>
+        <Link href="/early-access/" className="mt-6 flex min-h-14 items-center justify-between gap-3 rounded-3xl border border-gold/40 bg-gold/10 px-5 py-3" data-testid="early-access-cta">
+          <span>
+            <span className="block font-display font-bold">Want your own real account?</span>
+            <span className="text-small text-white/70">Join the early-access list</span>
+          </span>
+          <Icon name="arrow" className="h-5 w-5 shrink-0" />
+        </Link>
       </div>
     </main>
   );

@@ -6,6 +6,7 @@ import { Glows } from "@/components/landing/Glows";
 import { Icon } from "@/components/Icon";
 import { useDemo } from "@/lib/demo/store";
 import { kindLabel, saveFeedback, type FeedbackKind } from "@/lib/feedback";
+import { insertRow, remoteEnabled } from "@/lib/remote";
 
 const kinds: FeedbackKind[] = ["idea", "problem", "liked", "other"];
 const faces = ["😞", "😕", "😐", "🙂", "😍"];
@@ -25,12 +26,23 @@ export default function FeedbackPage() {
   useEffect(() => { if (ready && me) setName(me.name); }, [ready, me]);
   const sending = useRef(false); // stops a double-tap from saving twice
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (sending.current) return; // a second tap of the same send
-    const r = saveFeedback({ rating, kind, message, name: anonymous ? undefined : name, contact: anonymous ? undefined : contact });
-    if (!r.ok) return setError(r.error); // nothing saved: they can fix it and send again right away
+    const fb = { rating, kind, message, name: anonymous ? undefined : name, contact: anonymous ? undefined : contact };
+    if (!message.trim()) return setError("Please write your feedback.");
     sending.current = true;
+    if (remoteEnabled()) {
+      // Goes straight to the founder (insert-only table).
+      const r = await insertRow("feedback", { rating, kind, message: message.trim().slice(0, 1000), name: fb.name?.trim() || null, contact: fb.contact?.trim() || null, source: "demo" });
+      if (!r.ok) {
+        sending.current = false;
+        return setError("We couldn't send that just now. Please check your internet and try again.");
+      }
+    } else {
+      const r = saveFeedback(fb);
+      if (!r.ok) { sending.current = false; return setError(r.error); } // nothing saved: fix and send again right away
+    }
     window.setTimeout(() => { sending.current = false; }, 1000);
     setError(null);
     setSent(true);
@@ -134,7 +146,7 @@ export default function FeedbackPage() {
             <button type="submit" className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-orange font-display font-bold text-navy transition active:scale-[0.98]">
               Send feedback
             </button>
-            <p className="text-center text-tiny text-white/60">Demo: feedback is saved on this phone only. The DILO admin can read it here.</p>
+            <p className="text-center text-tiny text-white/60">{remoteEnabled() ? "Your feedback goes straight to the DILO founder." : "Demo: feedback is saved on this phone only. The DILO admin can read it here."}</p>
           </form>
         )}
       </div>
