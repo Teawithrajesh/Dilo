@@ -13,7 +13,8 @@ export async function insertRow(table: "feedback" | "early_access", row: Record<
   try {
     const res = await fetch(`${URL_}/rest/v1/${table}`, {
       method: "POST",
-      headers: { apikey: KEY, Authorization: `Bearer ${KEY}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+      // New publishable keys (sb_publishable_…) go in the apikey header only; old anon keys are JWTs and also go in Authorization.
+      headers: { apikey: KEY, ...(KEY.startsWith("sb_") ? {} : { Authorization: `Bearer ${KEY}` }), "Content-Type": "application/json", Prefer: "return=minimal" },
       body: JSON.stringify(row),
     });
     if (res.ok) return { ok: true };

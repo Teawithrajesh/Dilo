@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { clearFeedback, feedbackCsv, kindLabel, readFeedback, type Feedback } from "@/lib/feedback";
+import { remoteEnabled } from "@/lib/remote";
 import { AppShell } from "@/components/app/AppShell";
 import { SectionTitle } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
@@ -70,6 +71,22 @@ export default function Admin() {
           </li>
         ))}
       </ul>
+
+      {remoteEnabled() && (
+        <a
+          href="https://supabase.com/dashboard/project/ieaczkseiggwyaetjcdd/editor"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-testid="supabase-link"
+          className="mt-6 flex min-h-14 items-center justify-between gap-3 rounded-3xl border border-gold/40 bg-gold/10 px-5 py-3"
+        >
+          <span>
+            <span className="block font-display font-bold">Feedback &amp; early-access list</span>
+            <span className="text-small text-white/70">On the live site they go to Supabase. Open Table Editor → feedback / early_access.</span>
+          </span>
+          <span aria-hidden>↗</span>
+        </a>
+      )}
 
       <SectionTitle>{`Feedback · ${feedback.length}`}</SectionTitle>
       {feedback.length === 0 ? (

@@ -10,3 +10,5 @@
 - Report test results honestly.
 - Brand: one logo only (`public/brand/dilo-logo.png`: symbol + "DIL" white + gradient "O"). On the splash, tapping the O opens `/welcome/` (founder's choice). Premium navy style; no amateur-looking cards or buttons.
 - Tests: `npm run preview:update && npm test` (Playwright, phone + desktop) and `npm run test:contrast`.
+- Two builds (`npm run preview:update`): `preview/` (phone + tests, everything on-device) and `site/` (dilowish.com via Cloudflare Workers, feedback + early access go to Supabase). Commit both. Tests fake Supabase; they never write to the real database.
+- Supabase: insert-only tables `feedback`, `early_access` (RLS on). Only the public publishable key is in the repo (`config/public-supabase.json`); never add the secret/service key.

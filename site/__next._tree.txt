@@ -1,0 +1,10 @@
+:HL["/_next/static/chunks/42w9ipp9hssjg.css","style"]
+:HC["/",""]
+:HL["/brand/dilo-logo.png","image"]
+:HL["/brand/anim/infinity.png","image"]
+:HL["/brand/anim/dot-left.png","image"]
+:HL["/brand/anim/dot-right.png","image"]
+:HL["/brand/anim/star.png","image"]
+:HL["/brand/anim/dil.png","image"]
+1:[["children",{"s":"__PAGE__","h":160}]]
+0:{"b":"FSem3wR00FIEQsCrjGcn5","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

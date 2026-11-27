@@ -2,14 +2,14 @@
   "name": "dilo",
   "version": "0.1.0",
   "private": true,
-  "description": "DILO — Together, We Make Dreams Come True. Phase 1 prototype (demo data only).",
+  "description": "DILO \u2014 Together, We Make Dreams Come True. Phase 1 prototype (demo data only).",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "preview:update": "next build && node -e \"const fs=require('fs');fs.rmSync('preview',{recursive:true,force:true});fs.cpSync('out','preview',{recursive:true})\"",
+    "preview:update": "node scripts/build-all.mjs",
     "serve": "node scripts/serve.mjs preview",
     "lint:types": "tsc --noEmit",
     "test:contrast": "node scripts/check-contrast.mjs",
