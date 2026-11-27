@@ -40,7 +40,7 @@ Each step: Playwright tests on phone + desktop (as in Phase 1) plus database sec
 | | Supabase **Pro** for the pilot (doesn't pause, daily backups, spend cap on by default) | **$25/month ≈ ₹2,200** (usage above the included amounts is extra) | From step 9 |
 | Hosting | Cloudflare Pages Free (500 builds/month). *Vercel Hobby is for non-commercial use only.* Check Cloudflare's terms for commercial use before launch. | ₹0 | Step 9 |
 | Email | Resend Free: about 3,000 emails/month, 100/day | ₹0 | Step 7 |
-| Domain (e.g. for the email sender and the app address) | Any registrar | ≈ ₹1,000–1,500/year | Step 7 |
+| Domain | **dilowish.com** (GoDaddy) | **₹1,273 paid** for year 1; ₹1,599 + GST/year after | Done |
 | Phone OTP sign-in (optional, later) | e.g. MSG91 | ≈ ₹0.15–0.25 per OTP + DLT registration | Not in the pilot |
 | Lawyer (privacy policy + terms) | — | Get 2–3 quotes | Step 8 |
 | **Total** | | **₹0 while building; ≈ ₹2,200/month + domain once the pilot starts** (+ lawyer, one-time) | |
@@ -49,7 +49,7 @@ Each step: Playwright tests on phone + desktop (as in Phase 1) plus database sec
 1. **Validation first?** Do the 5–10 family check before inviting anyone for real (recommended: yes).
 2. **Sign-in**: email code (free, recommended for the pilot) or phone OTP (families like it, costs per SMS + DLT).
 3. **Hosting**: Cloudflare Pages Free (recommended) — the founder creates the account.
-4. **Domain name** for DILO (needed for the email sender and a proper address).
+4. ~~Domain name~~ — **done: dilowish.com** (bought 27 Nov 2026). Email will be e.g. hello@dilowish.com.
 5. **Supabase plan**: Free while building, **Pro ($25/month) from the pilot** — approve when we reach step 9.
 6. **Email provider**: Resend Free (recommended) — approve before the first real email.
 7. **Lawyer** for the privacy policy and terms — the founder chooses after quotes.
