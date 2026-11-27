@@ -1,0 +1,11 @@
+// Cloudflare Workers config: serves the ready-built site in ./preview (no build step needed).
+// The Worker name must match the project name chosen in the Cloudflare dashboard.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dilowish",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./preview",
+    "not_found_handling": "404-page"
+  }
+}
