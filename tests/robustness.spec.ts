@@ -74,3 +74,69 @@ test("an unknown address shows the DILO 'page not found' with a way back", async
   await page.getByRole("link", { name: "About DILO" }).click();
   await expect(page).toHaveURL(/\/welcome\/$/);
 });
+
+// A finger can double-tap before the screen updates. Each action must happen once.
+const doubleTap = (loc: import("@playwright/test").Locator) => loc.evaluate((el) => { (el as HTMLElement).click(); (el as HTMLElement).click(); });
+
+test("double-tap safety: wish, contribution, invite, community, approve, feedback", async ({ page }) => {
+  await signIn(page, "Priya Sharma");
+  const tab = (n: string) => page.getByRole("navigation", { name: "App" }).getByRole("link", { name: new RegExp(`${n}$`) });
+
+  await page.getByTestId("event-card").filter({ hasText: "Anjali's Wedding" }).click();
+  await expect(page.getByTestId("wish")).toHaveCount(3);
+  await page.getByRole("button", { name: "+ Add a wish" }).click();
+  await page.getByLabel("Wish", { exact: true }).fill("Once only");
+  await page.getByLabel("Estimated cost (₹)").fill("500");
+  await doubleTap(page.getByRole("button", { name: "Add wish" }));
+  await expect(page.getByTestId("wish")).toHaveCount(4);
+
+  await expect(page.getByTestId("contribution")).toHaveCount(4);
+  await page.getByRole("button", { name: "Record a contribution" }).click();
+  await page.getByLabel("Amount you gave (₹)").fill("500");
+  await doubleTap(page.getByRole("button", { name: "Record contribution" }));
+  await expect(page.getByTestId("contribution")).toHaveCount(5);
+
+  await page.getByRole("link", { name: "Sharma Family", exact: true }).click();
+  await page.getByRole("link", { name: "Invite" }).click();
+  await expect(page.getByTestId("invite-link")).toHaveCount(1);
+  await doubleTap(page.getByRole("button", { name: "Create new invite link" }));
+  await expect(page.getByTestId("invite-link")).toHaveCount(2);
+
+  await tab("Communities").click();
+  await expect(page.getByTestId("community-link")).toHaveCount(1);
+  await page.getByRole("link", { name: "+ Create community" }).click();
+  await page.getByLabel("Community name").fill("Only One");
+  await doubleTap(page.getByRole("button", { name: "Create community" }));
+  await page.waitForURL(/\/community\/\?id=only-one-/);
+  await tab("Communities").click();
+  await expect(page.getByTestId("community-link")).toHaveCount(2);
+
+  // approve twice → one membership
+  await tab("Profile").click();
+  await page.getByRole("button", { name: "Switch demo person" }).click();
+  await page.getByRole("button", { name: /^Ravi Kumar/ }).click();
+  await page.getByRole("button", { name: "Request to join" }).click();
+  await tab("Profile").click();
+  await page.getByRole("button", { name: "Switch demo person" }).click();
+  await page.getByRole("button", { name: /^Priya Sharma/ }).click();
+  await page.getByTestId("community-link").filter({ hasText: "Sharma Family" }).click();
+  await page.getByTestId("admin-panel").click();
+  await doubleTap(page.getByRole("button", { name: "Approve" }));
+  await expect(page.getByTestId("member").filter({ hasText: "Ravi Kumar" })).toHaveCount(1);
+});
+
+test("double-tap safety: feedback is saved once", async ({ page }) => {
+  await page.goto("/feedback/");
+  await page.getByLabel("Your feedback or suggestion").fill("once");
+  await doubleTap(page.getByRole("button", { name: "Send feedback" }));
+  await expect(page.getByTestId("feedback-thanks")).toBeVisible();
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("dilo-feedback") || "[]").length)).toBe(1);
+});
+
+test("double-tap safety: marking a wish covered doesn't flip it back", async ({ page }) => {
+  await signIn(page, "Priya Sharma");
+  await page.getByTestId("event-card").filter({ hasText: "Anjali's Wedding" }).click();
+  const w = page.getByTestId("wish").filter({ hasText: "Wedding photography" });
+  await doubleTap(w.getByRole("button", { name: "Mark covered" }));
+  await expect(w).toContainText("Covered");
+});
