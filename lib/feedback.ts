@@ -13,8 +13,26 @@ export const kindLabel: Record<FeedbackKind, string> = { idea: "Idea / suggestio
 export function readFeedback(): Feedback[] {
   try {
     const raw = localStorage.getItem(KEY);
-    const list = raw ? (JSON.parse(raw) as Feedback[]) : [];
-    return Array.isArray(list) ? list : [];
+    const list: unknown = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(list)) return [];
+    // Keep only entries that look right, so one damaged entry can't break the admin page.
+    return list.flatMap((f): Feedback[] => {
+      if (!f || typeof f !== "object") return [];
+      const o = f as Record<string, unknown>;
+      if (typeof o.message !== "string" || !o.message.trim()) return [];
+      const at = typeof o.at === "string" && !Number.isNaN(new Date(o.at).getTime()) ? o.at : new Date(0).toISOString();
+      const kind = (["idea", "problem", "liked", "other"] as const).includes(o.kind as FeedbackKind) ? (o.kind as FeedbackKind) : "other";
+      const rating = typeof o.rating === "number" && o.rating >= 1 && o.rating <= 5 ? Math.round(o.rating) : 0;
+      return [{
+        id: typeof o.id === "string" ? o.id : `f-${at}-${o.message.length}`,
+        at,
+        rating,
+        kind,
+        message: o.message.slice(0, 1000),
+        name: typeof o.name === "string" ? o.name : undefined,
+        contact: typeof o.contact === "string" ? o.contact : undefined,
+      }];
+    });
   } catch {
     return [];
   }
