@@ -13,6 +13,7 @@
     "serve": "node scripts/serve.mjs preview",
     "lint:types": "tsc --noEmit",
     "test:contrast": "node scripts/check-contrast.mjs",
+    "test:secrets": "node scripts/check-secrets.mjs",
     "brand:build": "echo \"See scripts/brand/build_logos.py (needs Python fonttools)\"",
     "test": "playwright test --trace off"
   },
