@@ -6,7 +6,9 @@
 const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
-export const remoteEnabled = () => !!URL_ && !!KEY;
+// Defence in depth: never use a secret/service key from the browser, even if one is misconfigured.
+const SECRET_KEY = KEY.startsWith("sb_secret_");
+export const remoteEnabled = () => !!URL_ && !!KEY && !SECRET_KEY;
 
 export async function insertRow(table: "feedback" | "early_access", row: Record<string, unknown>): Promise<{ ok: true } | { ok: false; error: string; duplicate?: boolean }> {
   if (!remoteEnabled()) return { ok: false, error: "not configured" };
