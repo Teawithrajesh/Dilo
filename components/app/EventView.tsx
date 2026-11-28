@@ -12,6 +12,8 @@ import { useDemo } from "@/lib/demo/store";
 import { Wishlist } from "@/components/app/event/Wishlist";
 import { Contributions } from "@/components/app/event/Contributions";
 import { ReportButton } from "@/components/app/ReportButton";
+import { Tour } from "@/components/app/Tour";
+import { eventTour } from "@/components/app/tours";
 
 /** Event page in its celebration theme. Wishlist and contributions arrive in Step 6. */
 export function EventView({ id }: { id: string }) {
@@ -75,7 +77,8 @@ export function EventView({ id }: { id: string }) {
           </div>
         )}
 
-        <Panel gold={c.gold} className="mt-12">
+        <div className="mt-12" data-tour="progress">
+        <Panel gold={c.gold}>
           <div className="flex items-center gap-6">
             <ProgressRing pct={pct} gold={c.gold} accent={c.glows} />
             <div className="min-w-0">
@@ -86,6 +89,7 @@ export function EventView({ id }: { id: string }) {
           </div>
           <p className="mt-5 border-t pt-4 text-tiny text-white/60" style={{ borderColor: `${c.gold}26` }}>Self-reported by members. DILO never handles money.</p>
         </Panel>
+        </div>
 
         <Divider gold={c.gold} />
         <Keepsakes
@@ -97,21 +101,24 @@ export function EventView({ id }: { id: string }) {
         />
         <Divider gold={c.gold} />
 
+        <div data-tour="dream">
         <Panel gold={c.gold}>
           <h2 className="text-tiny font-semibold uppercase tracking-[0.3em]" style={{ color: c.gold }}>Dream wish</h2>
           <p className="mt-3 font-serif text-[1.6rem] italic leading-snug text-white/95" data-testid="dream">&ldquo;{e.dream}&rdquo;</p>
           <h2 className="mt-8 text-tiny font-semibold uppercase tracking-[0.3em]" style={{ color: c.gold }}>Estimated budget</h2>
           <p className="mt-2 font-serif text-[2.4rem] font-semibold leading-none">{inr(e.goal)}</p>
         </Panel>
+        </div>
 
         <Divider gold={c.gold} />
-        <Wishlist eventId={e.id} c={c} />
-        <div className="mt-8">
+        <div data-tour="wishlist"><Wishlist eventId={e.id} c={c} /></div>
+        <div className="mt-8" data-tour="contributions">
           <Contributions eventId={e.id} c={c} />
         </div>
         <div className="mt-8 flex justify-center">
           <ReportButton communityId={e.communityId} target={{ type: "event", eventId: e.id }} summary={`Celebration: ${e.title}`} label="Report this celebration" />
         </div>
+        <Tour tour="event" steps={eventTour} />
       </div>
     </main>
   );

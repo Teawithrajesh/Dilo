@@ -1,0 +1,23 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:4173",
+      "localStorage": [
+        {
+          "name": "dilo-tours",
+          "value": "{\"priya\": [\"home\", \"event\"], \"amit\": [\"home\", \"event\"], \"neha\": [\"home\", \"event\"], \"ravi\": [\"home\", \"event\"], \"admin\": [\"home\", \"event\"]}"
+        }
+      ]
+    },
+    {
+      "origin": "http://localhost:4174",
+      "localStorage": [
+        {
+          "name": "dilo-tours",
+          "value": "{\"priya\": [\"home\", \"event\"], \"amit\": [\"home\", \"event\"], \"neha\": [\"home\", \"event\"], \"ravi\": [\"home\", \"event\"], \"admin\": [\"home\", \"event\"]}"
+        }
+      ]
+    }
+  ]
+}

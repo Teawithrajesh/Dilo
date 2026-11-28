@@ -10,6 +10,7 @@ import { SectionTitle } from "@/components/app/ui";
 import { Icon } from "@/components/Icon";
 import { useDemo } from "@/lib/demo/store";
 import { roleLabel } from "@/lib/permissions";
+import { resetTours } from "@/lib/tour";
 
 const box = "w-full rounded-2xl border border-white/15 bg-white/[0.04] px-4 text-white placeholder:text-white/40 focus:border-white/40 focus:outline-none";
 const row = "flex min-h-14 items-center justify-between gap-3 px-4 font-semibold transition hover:bg-white/[0.04]";
@@ -103,6 +104,9 @@ export default function Profile() {
         <Link href="/settings/" className={row}><span>Privacy &amp; safety</span><Icon name="arrow" className="h-5 w-5 text-white/60" /></Link>
         {!d.isPlatformAdmin && <Link href="/sparkles/" className={row}><span>✨ My Sparkles</span><Icon name="arrow" className="h-5 w-5 text-white/60" /></Link>}
         <Link href="/feedback/" className={row}><span>Send feedback</span><Icon name="arrow" className="h-5 w-5 text-white/60" /></Link>
+        <button type="button" onClick={() => { if (d.me) resetTours(d.me.id); router.push("/home/"); }} className={`${row} w-full text-left`}>
+          <span>🧭 Take the app tour</span><Icon name="arrow" className="h-5 w-5 text-white/60" />
+        </button>
         {d.moderatedCommunities.length > 0 && (
           <Link href="/moderation/" className={row}><span>Moderation</span><Icon name="arrow" className="h-5 w-5 text-white/60" /></Link>
         )}
