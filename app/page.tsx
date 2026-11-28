@@ -23,7 +23,12 @@ export default function Splash() {
           Together, We Make Dreams Come True.
         </p>
         <p className="mt-3 text-small text-white/60">Dream · Share · Support · Celebrate</p>
-        <p className="mt-14 text-tiny uppercase tracking-[0.2em] text-white/60">Press the O to begin</p>
+        {/* Same pink→orange as the O key, so people see which letter to press. */}
+        <p className="mt-14 text-small font-bold uppercase tracking-[0.2em]" data-testid="press-hint">
+          <span className="bg-gradient-to-r from-[#ff4f8f] to-orange bg-clip-text text-transparent">
+            Press the <span className="text-[1.3em] font-extrabold">O</span> to begin
+          </span>
+        </p>
       </div>
     </main>
   );
