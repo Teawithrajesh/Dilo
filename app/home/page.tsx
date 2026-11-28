@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
 import { DreamsSpotlight } from "@/components/app/DreamsSpotlight";
+import { Tour } from "@/components/app/Tour";
+import { homeTour } from "@/components/app/tours";
 import { SparklesCard } from "@/components/app/SparklesCard";
 import { CommunityPhoto, Cover } from "@/components/app/CommunityArt";
 import { EventCard, SectionTitle } from "@/components/app/ui";
@@ -62,11 +64,11 @@ export default function Home() {
 
       <SectionTitle>My communities</SectionTitle>
       {myCommunities.length === 0 ? (
-        <p className="rounded-3xl border border-dashed border-white/15 p-6 text-center text-small text-white/70">
+        <p data-tour="communities" className="rounded-3xl border border-dashed border-white/15 p-6 text-center text-small text-white/70">
           You&apos;re not in any community yet.
         </p>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul data-tour="communities" className="grid gap-3 sm:grid-cols-2">
           {myCommunities.map((c) => (
             <li key={c.id}>
               <Link href={`/community/?id=${c.id}`} data-testid="community-link" className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]">
@@ -96,11 +98,11 @@ export default function Home() {
 
       <SectionTitle>Upcoming celebrations</SectionTitle>
       {myUpcoming.length === 0 ? (
-        <p className="rounded-3xl border border-dashed border-white/15 p-6 text-center text-small text-white/70">
+        <p data-tour="upcoming" className="rounded-3xl border border-dashed border-white/15 p-6 text-center text-small text-white/70">
           Celebrations appear here once you join a community.
         </p>
       ) : (
-        <div className="space-y-3">
+        <div data-tour="upcoming" className="space-y-3">
           {myUpcoming.map((e) => (
             <EventCard key={e.id} e={e} community={myCommunities.find((c) => c.id === e.communityId)?.name} />
           ))}
@@ -117,6 +119,7 @@ export default function Home() {
         </span>
         <span aria-hidden className="text-[1.6rem]">💬</span>
       </Link>
+      <Tour tour="home" steps={homeTour} />
     </AppShell>
   );
 }

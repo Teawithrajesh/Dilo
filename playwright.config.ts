@@ -5,7 +5,9 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "tests",
   reporter: "list",
-  use: { baseURL: "http://localhost:4173", trace: "off" },
+  // Most tests act as returning visitors, so the first-visit guided tour doesn't cover the page.
+  // tests/tour.spec.ts turns this off to test the tour itself.
+  use: { baseURL: "http://localhost:4173", trace: "off", storageState: "tests/fixtures/tours-seen.json" },
   webServer: [
     { command: "node scripts/serve.mjs preview", env: { PORT: "4173" }, url: "http://localhost:4173", reuseExistingServer: true },
     // The live build (site/) that Cloudflare serves; its Supabase calls are faked in tests/live-site.spec.ts.
